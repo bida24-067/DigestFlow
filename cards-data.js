@@ -1,449 +1,407 @@
 /**
- * DigestFlow - Educational Curriculum & Card Data
- * 3 Progressive Levels of Human Digestive System mastery
- * Clean, bold, solid colors without muddy gradients
+ * DigestBeach - Snakes & Ladders Edition
+ * Educational Curriculum, Cards, and 36-Tile Snakes & Ladders Board Map
  */
 
-const DIGEST_LEVELS = [
+// 36-Tile Snakes & Ladders Board Configuration (6 rows x 6 columns)
+const SNAKES_AND_LADDERS_CONFIG = {
+  totalTiles: 36,
+  rows: 6,
+  cols: 6,
+  // 🪜 Ladders: startTile (bottom) -> endTile (top)
+  ladders: [
+    { from: 3, to: 16, title: "Saliva Slide Up! 🪜", text: "Good chewing and saliva made food glide right up!" },
+    { from: 8, to: 22, title: "Fiber Power Ladder! 🪜", text: "Healthy crunchy veggies boosted your digestion!" },
+    { from: 15, to: 26, title: "Bile Supercharge! 🪜", text: "Bile bubbles melted all the fats! Climb up!" },
+    { from: 21, to: 32, title: "Villi Fast-Track! 🪜", text: "Millions of tiny villi grabbed nutrients! Zoom up!" }
+  ],
+  // 🐍 Snakes / Beach Water-Slides: fromTile (head) -> toTile (tail)
+  snakes: [
+    { from: 12, to: 2, title: "Forgot to Chew! 🐍", text: "Gulp! Food was swallowed whole. Slide back down to chew!" },
+    { from: 17, to: 4, title: "Fizzy Soda Hiccup! 🐍", text: "Burp! Too much fizz made you hiccup back down!" },
+    { from: 29, to: 14, title: "Need More Water! 🐍", text: "Dehydration slowed things down. Drink water and slide down!" },
+    { from: 35, to: 18, title: "Spicy Pepper Gurgle! 🐍", text: "Whoa, spicy! Tummy rumble slides you back to recover!" }
+  ],
+  // Special tiles (Organ stops & beach bonuses)
+  tiles: {
+    1: { type: "organ", cardId: "mouth", name: "Mouth 👄", tag: "Start: Chewing Station" },
+    5: { type: "organ", cardId: "esophagus", name: "Food Pipe 🎢", tag: "Swallow Wave" },
+    7: { type: "bonus", bonusType: "coconut", stars: 30, name: "Coconut Break 🥥", text: "Chilled coconut water! +30 Bonus Stars!" },
+    9: { type: "organ", cardId: "stomach", name: "Stomach 🧪", tag: "Acid Blender" },
+    11: { type: "bonus", bonusType: "starfish", stars: 40, name: "Lucky Starfish ⭐", text: "You found a lucky starfish! +40 Bonus Stars!" },
+    13: { type: "organ", cardId: "liver", name: "Liver 🏭", tag: "Body Factory" },
+    19: { type: "organ", cardId: "gallbladder", name: "Gallbladder 🥑", tag: "Bile Pouch" },
+    20: { type: "bonus", bonusType: "shell", stars: 50, name: "Pearl Shell 🐚", text: "Shiny beach treasure! +50 Bonus Stars!" },
+    23: { type: "organ", cardId: "pancreas", name: "Pancreas 🥖", tag: "Juice Guard" },
+    25: { type: "bonus", bonusType: "roll", name: "Beach Ball 🏐", text: "Extra roll! Roll the dice again!" },
+    27: { type: "organ", cardId: "small-intestine", name: "Small Intestine 🌿", tag: "Vitamin Sponge" },
+    31: { type: "organ", cardId: "large-intestine", name: "Large Intestine 🌊", tag: "Water Saver" },
+    34: { type: "organ", cardId: "microbiome", name: "Gut Bugs 🦠", tag: "Friendly Helpers" },
+    36: { type: "finish", name: "Grand Finish 🏆", tag: "Digestive Champion!" }
+  }
+};
+
+// Educational Cards for Quiz Stops
+const ALL_ORGAN_CARDS = [
   {
-    level: 1,
-    title: "Level 1: The Core Journey",
-    subtitle: "Trace the primary gastrointestinal tract from first bite to final exit",
-    badge: "Core Foundations",
-    themeColor: "#FF3B5C",
-    description: "Follow food as it travels through the main hollow muscular organs of the GI tract.",
-    cards: [
-      {
-        id: "mouth",
-        number: "01",
-        name: "Mouth",
-        aliases: ["mouth", "oral cavity", "buccal cavity", "teeth and tongue", "mouth cavity"],
-        icon: "mouth",
-        emoji: "👄",
-        color: "#FF3B5C",
-        tag: "Ingestion & Mastication",
-        clue: "I am the gateway to the digestive tract. Here, mechanical digestion begins with chewing, while saliva moistens food and starts chemical breakdown into a soft ball called a bolus.",
-        hint1: "Located on the face; contains teeth, tongue, and salivary ducts.",
-        hint2: "Starts with the letter 'M' and rhymes with 'south'.",
-        funFact: "Human teeth are coated in enamel, which is the hardest substance in the human body!",
-        tractStage: 1
-      },
-      {
-        id: "esophagus",
-        number: "02",
-        name: "Esophagus",
-        aliases: ["esophagus", "oesophagus", "food pipe", "gullet"],
-        icon: "esophagus",
-        emoji: "🎢",
-        color: "#0084FF",
-        tag: "Peristaltic Propulsion",
-        clue: "I am a muscular tube roughly 25 cm (10 inches) long. I push food downward from the pharynx into the stomach using involuntary, wave-like muscular contractions.",
-        hint1: "Often nicknamed the 'food pipe'; connects throat directly to the stomach.",
-        hint2: "Begins with 'E' (or 'Oe' in British English). Sounds like 'ee-soff-uh-gus'.",
-        funFact: "Thanks to peristalsis, food moves down this tube even if you are hanging upside down!",
-        tractStage: 2
-      },
-      {
-        id: "stomach",
-        number: "03",
-        name: "Stomach",
-        aliases: ["stomach", "gastric pouch", "belly"],
-        icon: "stomach",
-        emoji: "🧪",
-        color: "#FF9500",
-        tag: "Acid Churning & Proteolysis",
-        clue: "I am a J-shaped muscular sac that violently churns food with hydrochloric acid and enzymes, transforming solid food into an acidic semi-liquid slurry called chyme.",
-        hint1: "Located in the upper left abdomen; lined with protective mucus against powerful acid.",
-        hint2: "A 7-letter word beginning with 'S' and ending with 'H'.",
-        funFact: "The stomach's hydrochloric acid is potent enough to dissolve zinc, but a thick layer of mucus protects its lining!",
-        tractStage: 3
-      },
-      {
-        id: "small-intestine",
-        number: "04",
-        name: "Small Intestine",
-        aliases: ["small intestine", "small bowel", "duodenum", "jejunum", "ileum", "duodenum jejunum ileum"],
-        icon: "small-intestine",
-        emoji: "🌿",
-        color: "#00B37E",
-        tag: "Absorption Epicenter",
-        clue: "Despite my 'small' diameter, I am over 6 meters (20 feet) long! I am where roughly 90% of chemical digestion and nutrient absorption into the bloodstream occurs.",
-        hint1: "Divided into three segments: Duodenum, Jejunum, and Ileum.",
-        hint2: "Two words: starts with 'S' and ends with 'Intestine'.",
-        funFact: "If you flattened all the microscopic folds (villi) lining this organ, its surface area would cover a tennis court!",
-        tractStage: 4
-      },
-      {
-        id: "large-intestine",
-        number: "05",
-        name: "Large Intestine",
-        aliases: ["large intestine", "colon", "large bowel", "large intestines"],
-        icon: "large-intestine",
-        emoji: "🌊",
-        color: "#7952DE",
-        tag: "Water Reclamation",
-        clue: "I frame the abdomen like a picture border. My primary duties are reabsorbing water and essential salts from indigestible remnants, preparing feces for elimination.",
-        hint1: "Also widely known as the 'colon'; wider in diameter than its neighbor.",
-        hint2: "Two words: starts with 'L' and ends with 'Intestine'.",
-        funFact: "It reabsorbs over 1.5 liters of water every single day to prevent dehydration!",
-        tractStage: 5
-      },
-      {
-        id: "rectum-anus",
-        number: "06",
-        name: "Rectum",
-        aliases: ["rectum", "anus", "rectum and anus", "anal canal"],
-        icon: "rectum",
-        emoji: "🎯",
-        color: "#E0245E",
-        tag: "Storage & Elimination",
-        clue: "I represent the terminal chamber of the digestive system. I temporarily store formed waste, and sensors signal the brain when it's time for egestion via voluntary sphincters.",
-        hint1: "The final 12-15 cm storage section before waste exits the body.",
-        hint2: "A 6-letter word beginning with 'R' and ending with 'M'.",
-        funFact: "Specialized nerve endings here allow your brain to differentiate between liquid, solid, and gas!",
-        tractStage: 6
-      }
-    ]
+    id: "mouth",
+    name: "Mouth",
+    emoji: "👄",
+    color: "#F97316",
+    tag: "Chewing & Tasting",
+    childRiddle: "I am on your face! Your teeth chew food here, and your spit makes it soft and wet so you can swallow.",
+    options: ["👄 The Mouth", "🧪 The Stomach", "🌿 The Intestine", "👂 The Ear"],
+    correctIndex: 0,
+    hint: "It has teeth, a tongue, and smiles for photos!",
+    funFact: "Your teeth are covered in enamel, which is even harder than your bones!"
   },
   {
-    level: 2,
-    title: "Level 2: The Helper Squad",
-    subtitle: "Accessory organs and biochemical secretions that supercharge digestion",
-    badge: "Accessory Squad",
-    themeColor: "#0284C7",
-    description: "Food never passes through these organs directly, but without their secretions, digestion would halt.",
-    cards: [
-      {
-        id: "salivary-glands",
-        number: "01",
-        name: "Salivary Glands",
-        aliases: ["salivary glands", "salivary gland", "parotid gland", "saliva glands"],
-        icon: "salivary",
-        emoji: "💧",
-        color: "#0284C7",
-        tag: "Oral Moisturization",
-        clue: "We are three pairs of glands (parotid, submandibular, sublingual) positioned around the mouth. We produce a lubricating fluid rich in amylase to dissolve flavors and protect teeth.",
-        hint1: "They secrete about 1 to 1.5 liters of saliva every day.",
-        hint2: "Two words: starts with 'Salivary' and ends with 'Glands'.",
-        funFact: "You produce enough saliva over a lifetime to fill more than two standard swimming pools!",
-        tractStage: 1
-      },
-      {
-        id: "liver",
-        number: "02",
-        name: "Liver",
-        aliases: ["liver", "hepatic organ"],
-        icon: "liver",
-        emoji: "🏭",
-        color: "#DC2626",
-        tag: "Biochemical Factory",
-        clue: "I am the largest internal organ and a metabolic powerhouse. I filter blood coming from the GI tract, neutralize toxins, store glycogen, and continuously manufacture bile.",
-        hint1: "Located in the upper right abdominal quadrant; can regenerate its own tissue.",
-        hint2: "A 5-letter word beginning with 'L' and ending with 'R'.",
-        funFact: "The liver performs over 500 vital metabolic functions simultaneously!",
-        tractStage: 3
-      },
-      {
-        id: "gallbladder",
-        number: "03",
-        name: "Gallbladder",
-        aliases: ["gallbladder", "gall bladder", "cholecyst"],
-        icon: "gallbladder",
-        emoji: "🥑",
-        color: "#65A30D",
-        tag: "Bile Concentration",
-        clue: "I am a small, pear-shaped sac nestled beneath the liver. I don't produce bile, but I store, concentrate, and squirt it into the duodenum when fatty meals arrive.",
-        hint1: "People can live without me if gallstones require surgical removal.",
-        hint2: "Compound word beginning with 'Gall' and ending with 'bladder'.",
-        funFact: "Bile concentrated inside this organ can be up to 10 times more potent than when freshly made by the liver!",
-        tractStage: 4
-      },
-      {
-        id: "pancreas",
-        number: "04",
-        name: "Pancreas",
-        aliases: ["pancreas", "pancreatic gland"],
-        icon: "pancreas",
-        emoji: "🥖",
-        color: "#D97706",
-        tag: "Dual Endocrine & Exocrine",
-        clue: "I lie horizontally behind the stomach. I deliver a cocktail of digestive enzymes (lipase, protease, amylase) plus alkaline sodium bicarbonate to neutralize burning stomach acid.",
-        hint1: "Also produces the hormones insulin and glucagon to balance blood sugar.",
-        hint2: "An 8-letter word starting with 'P' and ending with 'S'.",
-        funFact: "Its bicarbonate secretion is practically identical to household baking soda, safeguarding your delicate intestinal walls!",
-        tractStage: 4
-      },
-      {
-        id: "bile",
-        number: "05",
-        name: "Bile",
-        aliases: ["bile", "gall", "bile fluid"],
-        icon: "bile",
-        emoji: "🧪",
-        color: "#CA8A04",
-        tag: "Fat Emulsification",
-        clue: "I am a bitter, yellowish-green alkaline fluid. I act like natural dish soap, emulsifying large lipid globules into microscopic droplets so lipases can digest them.",
-        hint1: "Synthesized in the liver and stored in the gallbladder.",
-        hint2: "A short 4-letter word starting with 'B'. Rhymes with 'mile'.",
-        funFact: "Bile's pigments (bilirubin from recycled red blood cells) are what give human waste its characteristic brown color!",
-        tractStage: 4
-      },
-      {
-        id: "gastric-juice",
-        number: "06",
-        name: "Gastric Juice",
-        aliases: ["gastric juice", "hydrochloric acid", "hcl", "stomach acid", "gastric acid"],
-        icon: "gastric-juice",
-        emoji: "⚡",
-        color: "#E11D48",
-        tag: "Chemical Breakdown",
-        clue: "I am a caustic mixture containing hydrochloric acid (pH 1.5 - 2) and pepsinogen. I unravel dense protein structures and eradicate ingested microorganisms before they cause illness.",
-        hint1: "Secreted by parietal and chief cells within the gastric mucosa.",
-        hint2: "Two words: starts with 'Gastric' and ends with 'Juice' (or named after its acid: HCl).",
-        funFact: "The acidity in your stomach is roughly equivalent to car battery acid!",
-        tractStage: 3
-      }
-    ]
+    id: "esophagus",
+    name: "Food Pipe (Esophagus)",
+    emoji: "🎢",
+    color: "#0EA5E9",
+    tag: "The Food Slide",
+    childRiddle: "I am a long, stretchy muscular slide behind your throat. I squeeze food down to your tummy like a wave!",
+    options: ["🎢 Food Pipe (Esophagus)", "👃 Nose", "👄 Mouth", "👣 Feet"],
+    correctIndex: 0,
+    hint: "It connects your throat directly to your stomach.",
+    funFact: "Muscles squeeze food down, so you could swallow even if you were upside down on monkey bars!"
   },
   {
-    level: 3,
-    title: "Level 3: Microscopic & Molecular Mastery",
-    subtitle: "Enzymes, cellular structures, and physiological mechanisms",
-    badge: "Molecular Mastery",
-    themeColor: "#9333EA",
-    description: "Delve into the molecular biology, cellular architecture, and biomechanics of human digestion.",
-    cards: [
-      {
-        id: "amylase",
-        number: "01",
-        name: "Amylase",
-        aliases: ["amylase", "salivary amylase", "ptyalin", "pancreatic amylase"],
-        icon: "enzyme-carb",
-        emoji: "🍞",
-        color: "#EA580C",
-        tag: "Carbohydrate Catalysis",
-        clue: "I am the enzyme responsible for cleaving complex polysaccharides like starches and glycogen into simpler disaccharides such as maltose. I work in the mouth and small intestine.",
-        hint1: "If you chew a saltine cracker for 60 seconds without swallowing, I make it taste sweet!",
-        hint2: "Starts with 'A', ends with 'ase' (the universal enzyme suffix).",
-        funFact: "Human saliva contains such high concentrations of this enzyme that starch begins breaking down within seconds of chewing!",
-        tractStage: 1
-      },
-      {
-        id: "pepsin",
-        number: "02",
-        name: "Pepsin",
-        aliases: ["pepsin", "pepsin enzyme"],
-        icon: "enzyme-protein",
-        emoji: "🥩",
-        color: "#9333EA",
-        tag: "Protease Catalyst",
-        clue: "I am an active protease created when inactive pepsinogen meets stomach acid. I slice peptide bonds within dietary proteins, reducing long polypeptide chains into smaller peptides.",
-        hint1: "Named from the Greek word 'pepsis' meaning digestion; namesake of Pepsi-Cola.",
-        hint2: "A 6-letter enzyme beginning with 'P' and ending with 'in'.",
-        funFact: "It is one of very few human enzymes that thrives in an ultra-acidic pH around 2.0; it denatures in neutral pH!",
-        tractStage: 3
-      },
-      {
-        id: "lipase",
-        number: "03",
-        name: "Lipase",
-        aliases: ["lipase", "pancreatic lipase", "gastric lipase"],
-        icon: "enzyme-fat",
-        emoji: "🧈",
-        color: "#EAB308",
-        tag: "Lipid Cleavage",
-        clue: "I am the primary enzyme charged with breaking down dietary triglycerides into free fatty acids and monoglycerides after bile has emulsified them into micelles.",
-        hint1: "The root 'lipo-' refers to fat/lipid in Greek.",
-        hint2: "Starts with 'L' and ends with 'ase'.",
-        funFact: "Without this enzyme, our bodies cannot absorb fat-soluble vitamins (A, D, E, and K) essential for vision, bones, and immunity!",
-        tractStage: 4
-      },
-      {
-        id: "villi",
-        number: "04",
-        name: "Villi",
-        aliases: ["villi", "microvilli", "villus", "intestinal villi"],
-        icon: "villi",
-        emoji: "🌾",
-        color: "#0D9488",
-        tag: "Surface Area Multipliers",
-        clue: "We are millions of velvety, finger-like projections protruding from the inner lining of the small intestine. Each of us contains a capillary bed and a lacteal for lipid absorption.",
-        hint1: "Singular form is 'villus'; micro-projections on our cells are called 'microvilli'.",
-        hint2: "A 5-letter anatomical word beginning with 'V' and ending with 'I'.",
-        funFact: "These microscopic fingers amplify the intestinal absorptive surface area by an astonishing 30 to 60 times!",
-        tractStage: 4
-      },
-      {
-        id: "peristalsis",
-        number: "05",
-        name: "Peristalsis",
-        aliases: ["peristalsis", "peristaltic movement", "peristaltic wave", "peristaltic motion"],
-        icon: "peristalsis",
-        emoji: "〰️",
-        color: "#2563EB",
-        tag: "Involuntary Motility",
-        clue: "I am the coordinated, alternating contraction and relaxation of circular and longitudinal smooth muscles that propels contents through the esophagus, stomach, and intestines.",
-        hint1: "Operates autonomously via the enteric nervous system, continuing even while you sleep.",
-        hint2: "An 11-letter biological term starting with 'P' and ending with 'sis'.",
-        funFact: "This mechanical wave is so powerful that astronauts can swallow and digest food normally in zero-gravity space!",
-        tractStage: 2
-      },
-      {
-        id: "microbiome",
-        number: "06",
-        name: "Gut Microbiome",
-        aliases: ["gut microbiome", "microbiome", "gut flora", "microbiota", "gut bacteria", "intestinal flora"],
-        icon: "microbiome",
-        emoji: "🦠",
-        color: "#DB2777",
-        tag: "Symbiotic Ecosystem",
-        clue: "We are trillions of symbiotic microorganisms living primarily in the large intestine. We ferment indigestible fiber, synthesize vitamins K and B12, and educate your immune system.",
-        hint1: "Our collective genome contains over 100 times more unique genes than human DNA.",
-        hint2: "Two words: starts with 'Gut' and ends with 'Microbiome' (or 'Flora').",
-        funFact: "Your gut contains up to 2 kg (4.4 lbs) of bacteria — roughly the same weight as the human brain!",
-        tractStage: 5
-      }
-    ]
+    id: "stomach",
+    name: "Stomach",
+    emoji: "🧪",
+    color: "#F59E0B",
+    tag: "Tummy Blender",
+    childRiddle: "I am a stretchy pouch in your tummy. I churn food with special juices like a blender until it's soupy!",
+    options: ["🧪 Stomach", "🧠 Brain", "👄 Mouth", "👁️ Eye"],
+    correctIndex: 0,
+    hint: "Your tummy growls here when you are hungry!",
+    funFact: "Your stomach makes a protective coat of slime so its strong acids don't hurt it!"
+  },
+  {
+    id: "liver",
+    name: "Liver",
+    emoji: "🏭",
+    color: "#EF4444",
+    tag: "Body's Super Factory",
+    childRiddle: "I am the largest organ inside your body! I clean your blood, store sugar for energy, and make green bile to break down fats.",
+    options: ["🏭 Liver", "👃 Nose", "🦷 Tooth", "👣 Toe"],
+    correctIndex: 0,
+    hint: "Located under your right ribs. It can regrow if a piece is hurt!",
+    funFact: "The liver works on more than 500 different body jobs at the same time!"
+  },
+  {
+    id: "gallbladder",
+    name: "Gallbladder",
+    emoji: "🥑",
+    color: "#84CC16",
+    tag: "Bile Backpack",
+    childRiddle: "I am a tiny green pear-shaped pouch hiding under the liver. I save up bile and squirt it when you eat french fries or cheese!",
+    options: ["🥑 Gallbladder", "👂 Ear", "🧠 Brain", "🦴 Ribs"],
+    correctIndex: 0,
+    hint: "It stores the green juice made by the liver.",
+    funFact: "The bile inside is super concentrated — like extra-strong dish soap for oily food!"
+  },
+  {
+    id: "pancreas",
+    name: "Pancreas",
+    emoji: "🥖",
+    color: "#F59E0B",
+    tag: "Juice & Sugar Guard",
+    childRiddle: "I sit quietly behind your stomach. I make enzyme juices to break down food, and insulin to balance sugar in your blood!",
+    options: ["🥖 Pancreas", "👄 Mouth", "👁️ Eye", "🫀 Heart"],
+    correctIndex: 0,
+    hint: "Helps control your energy and blood sugar.",
+    funFact: "Its juice works just like baking soda to keep your tummy acid from burning!"
+  },
+  {
+    id: "small-intestine",
+    name: "Small Intestine",
+    emoji: "🌿",
+    color: "#22C55E",
+    tag: "Vitamin Sponge",
+    childRiddle: "I am a super-long, wiggly tube in your belly. I soak up all the good vitamins, energy, and nutrients from food into your blood!",
+    options: ["🌿 Small Intestine", "🦴 Leg Bone", "🎢 Food Pipe", "👃 Nose"],
+    correctIndex: 0,
+    hint: "Even though it's called 'small', it is very long (about 20 feet)!",
+    funFact: "If you stretched it out straight, it would be longer than 3 grown-ups lying head-to-toe!"
+  },
+  {
+    id: "large-intestine",
+    name: "Large Intestine",
+    emoji: "🌊",
+    color: "#A855F7",
+    tag: "Water Saver",
+    childRiddle: "I wrap around your tummy like a picture frame. I soak up water so your body stays hydrated, and pack what's left over.",
+    options: ["🌊 Large Intestine", "🫀 Heart", "👄 Mouth", "🧪 Stomach"],
+    correctIndex: 0,
+    hint: "Also known as the 'colon'. Wider than the small intestine.",
+    funFact: "It drinks back up to 6 cups of water from your food every single day so you don't get thirsty!"
+  },
+  {
+    id: "microbiome",
+    name: "Gut Microbiome",
+    emoji: "🦠",
+    color: "#EC4899",
+    tag: "Friendly Belly Bugs",
+    childRiddle: "We are trillions of friendly little bacteria living happily in your gut. We help digest veggies, make vitamins, and fight off bad germs!",
+    options: ["🦠 Gut Microbiome (Friendly Bugs)", "🦟 Mosquitoes", "🐜 Ants", "🪰 Houseflies"],
+    correctIndex: 0,
+    hint: "Friendly, healthy bacteria living in your belly.",
+    funFact: "Your belly has more friendly gut bugs than there are stars in the Milky Way galaxy!"
   }
 ];
 
-// SVG Icon definitions (Apple-style clean, crisp solid vector paths)
-const ORGAN_SVGS = {
-  "mouth": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 28C16 18 48 18 52 28C56 38 48 48 32 48C16 48 8 38 12 28Z"/>
-    <path d="M12 28C24 36 40 36 52 28"/>
-    <path d="M22 32V38M32 34V42M42 32V38" stroke-width="2"/>
-    <path d="M24 24H40" stroke-width="2" stroke-dasharray="3 3"/>
-  </svg>`,
-  
-  "esophagus": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M26 8C26 8 28 20 25 32C22 44 26 56 26 56"/>
-    <path d="M38 8C38 8 40 20 37 32C34 44 38 56 38 56"/>
-    <path d="M25 22C29 24 33 24 37 22" stroke-width="2"/>
-    <path d="M24 34C28 36 32 36 36 34" stroke-width="2"/>
-    <path d="M26 46C30 48 34 48 38 46" stroke-width="2"/>
-    <circle cx="31" cy="14" r="3" fill="currentColor" fill-opacity="0.3"/>
-    <circle cx="30" cy="28" r="3.5" fill="currentColor" fill-opacity="0.4"/>
-  </svg>`,
+// 25+ Engaging Questions Asked On Every Dice Roll!
+const DIGESTIVE_ROLL_QUESTIONS = [
+  {
+    id: "q-mouth-entry",
+    topic: "The Mouth 👄",
+    question: "Where does your food begin its journey through your body?",
+    emoji: "👄",
+    options: ["👄 In your Mouth", "👂 In your Ears", "🦶 On your Feet", "👃 In your Nose"],
+    correctIndex: 0,
+    hint: "You smile and chew with it every day!",
+    funFact: "Your mouth produces about 1 to 2 liters of saliva every single day!"
+  },
+  {
+    id: "q-teeth-job",
+    topic: "Teeth 🦷",
+    question: "What do your teeth do to food when you take a bite?",
+    emoji: "🦷",
+    options: ["🦷 Bite, crush, and grind food", "🎨 Paint food purple", "❄️ Freeze food cold", "🎶 Sing songs to food"],
+    correctIndex: 0,
+    hint: "They make big food chunks into tiny soft bits.",
+    funFact: "Tooth enamel is the hardest substance in the entire human body!"
+  },
+  {
+    id: "q-saliva-job",
+    topic: "Saliva 💧",
+    question: "What does spit (saliva) do to help you digest food?",
+    emoji: "💧",
+    options: ["💧 Wets food & softens it to swallow", "🧊 Turns food to ice", "🔥 Makes food spicy", "🎈 Turns food into a balloon"],
+    correctIndex: 0,
+    hint: "It keeps your mouth moist and starts breaking down carbs.",
+    funFact: "Saliva contains special enzymes called amylase that start breaking down bread and starches immediately!"
+  },
+  {
+    id: "q-esophagus-tube",
+    topic: "Food Pipe 🎢",
+    question: "What is the name of the stretchy tube connecting your mouth to your stomach?",
+    emoji: "🎢",
+    options: ["🎢 Food Pipe (Esophagus)", "🛝 Playground Slide", "🚲 Bicycle Chain", "🎺 Brass Trumpet"],
+    correctIndex: 0,
+    hint: "It squeezes food downward with gentle muscular waves.",
+    funFact: "The wave of muscular squeezes that pushes food down is called peristalsis!"
+  },
+  {
+    id: "q-stomach-blender",
+    topic: "The Stomach 🧪",
+    question: "What does your stomach act like to churn and mix food?",
+    emoji: "🧪",
+    options: ["🥣 A churning blender with digestive juices", "⏰ An alarm clock", "📻 A music radio", "🔦 A flashlight"],
+    correctIndex: 0,
+    hint: "It sloshes and grinds food into a smooth liquid soup.",
+    funFact: "Food stays in your stomach for about 2 to 4 hours while getting churned!"
+  },
+  {
+    id: "q-stomach-acid",
+    topic: "Stomach Juices ⚡",
+    question: "Why does the stomach make strong acid?",
+    emoji: "⚡",
+    options: ["⚡ To break down proteins & kill bad germs", "💡 To light up your belly", "❄️ To freeze dinner", "🫧 To blow bubblegum bubbles"],
+    correctIndex: 0,
+    hint: "It sanitizes food and helps digestive enzymes do their work.",
+    funFact: "Stomach acid is strong enough that your body grows a fresh stomach lining every few days!"
+  },
+  {
+    id: "q-liver-bile",
+    topic: "The Liver 🏭",
+    question: "What special green juice does the liver make to help break down oily fats?",
+    emoji: "🏭",
+    options: ["🟢 Bile", "🧃 Apple Juice", "🥛 Chocolate Milk", "🥫 Tomato Ketchup"],
+    correctIndex: 0,
+    hint: "It acts just like dish soap washing grease off a pan!",
+    funFact: "The liver is the only internal organ that can naturally regrow itself if injured!"
+  },
+  {
+    id: "q-gallbladder-pouch",
+    topic: "Gallbladder 🥑",
+    question: "Where is bile stored until you eat foods with healthy fats?",
+    emoji: "🥑",
+    options: ["🥑 Gallbladder", "🎒 School Backpack", "🧤 Winter Mittens", "🧢 Sun Hat"],
+    correctIndex: 0,
+    hint: "A small pear-shaped pouch tucked right under the liver.",
+    funFact: "When oily food enters your intestine, the gallbladder squirts bile like a water pistol!"
+  },
+  {
+    id: "q-pancreas-sugar",
+    topic: "The Pancreas 🥖",
+    question: "What does the pancreas make to balance sugar and give your body steady energy?",
+    emoji: "🥖",
+    options: ["🥖 Insulin & digestive juices", "🎈 Helium gas", "🧂 Table salt", "🍋 Lemon seeds"],
+    correctIndex: 0,
+    hint: "It helps your cells absorb glucose for playtime energy.",
+    funFact: "The pancreas also neutralizes stomach acid so it doesn't irritate your intestines!"
+  },
+  {
+    id: "q-small-intestine-length",
+    topic: "Small Intestine 🌿",
+    question: "Why is the small intestine super long (about 20 feet)?",
+    emoji: "🌿",
+    options: ["🌿 To soak up as many vitamins & nutrients as possible", "🎪 To jump rope with", "📦 To store toys", "🧶 To knit sweaters"],
+    correctIndex: 0,
+    hint: "It has a huge surface area covered in tiny absorbent villi.",
+    funFact: "If you flattened all the tiny folds in the small intestine, it would cover a whole tennis court!"
+  },
+  {
+    id: "q-villi-sponges",
+    topic: "Tiny Villi 🧽",
+    question: "What are the tiny finger-like bumps inside the small intestine called?",
+    emoji: "🧽",
+    options: ["🧽 Villi", "🌲 Pine needles", "🐾 Cat paws", "🪶 Bird feathers"],
+    correctIndex: 0,
+    hint: "They act like microscopic sponges absorbing vitamins into blood.",
+    funFact: "Villi increase the intestine's absorption power by more than 30 times!"
+  },
+  {
+    id: "q-large-intestine-water",
+    topic: "Large Intestine 🌊",
+    question: "What is the main superpower of the large intestine?",
+    emoji: "🌊",
+    options: ["🌊 Drinking back leftover water to keep you hydrated", "Chewing crunchy apples", "Smelling flowers", "Hearing loud music"],
+    correctIndex: 0,
+    hint: "It reclaims cups of water so your body stays refreshed.",
+    funFact: "The large intestine absorbs about 1.5 liters of water back into your body every day!"
+  },
+  {
+    id: "q-microbiome-friends",
+    topic: "Gut Microbiome 🦠",
+    question: "Who are the trillions of friendly helpers living in your belly?",
+    emoji: "🦠",
+    options: ["🦠 Friendly gut bacteria (Microbiome)", "🐜 Ants from the garden", "🐟 Goldfish", "🐝 Honeybees"],
+    correctIndex: 0,
+    hint: "Healthy bacteria that love fruits, vegetables, and yogurt!",
+    funFact: "Your microbiome helps produce Vitamin K, which helps cuts and scrapes clot and heal!"
+  },
+  {
+    id: "q-water-importance",
+    topic: "Healthy Habits 💧",
+    question: "Why is drinking clean water important for your digestive system?",
+    emoji: "💧",
+    options: ["💧 It keeps food moving smoothly and avoids tummy ache", "🪨 It turns tummy food into rocks", "🫧 It turns your skin blue", "⚡ It makes you run at lightspeed"],
+    correctIndex: 0,
+    hint: "Water keeps everything soft, hydrated, and gliding along.",
+    funFact: "Your digestive system uses about 9 liters of liquid every day to process your meals!"
+  },
+  {
+    id: "q-fiber-power",
+    topic: "Fiber Power 🥦",
+    question: "Which foods give you crunchy fiber that helps your intestines work best?",
+    emoji: "🥦",
+    options: ["🥦 Crunchy veggies, apples, and whole grains", "🍬 Sticky chewy candy", "🥤 Fizzy soda pop", "🍦 Melting ice cream bars"],
+    correctIndex: 0,
+    hint: "Fruits and veggies with crisp skin have lots of fiber!",
+    funFact: "Fiber acts like a gentle body broom, sweeping everything through your digestive tract!"
+  },
+  {
+    id: "q-chewing-speed",
+    topic: "Mindful Eating ⏳",
+    question: "Why is it best to chew your food slowly instead of gulping it down?",
+    emoji: "⏳",
+    options: ["⏳ It prevents choking and gives your stomach an easier job", "So you can swallow whole hamburgers", "So your lunch turns into soup instantly", "To practice counting to 100"],
+    correctIndex: 0,
+    hint: "Chewing well gives your tummy smaller pieces to dissolve.",
+    funFact: "Digestion starts before you even take a bite — just smelling good food makes your mouth water!"
+  },
+  {
+    id: "q-tongue-taste",
+    topic: "The Tongue 👅",
+    question: "What do the taste buds on your tongue help you do?",
+    emoji: "👅",
+    options: ["👅 Taste sweet, salty, sour, and savory flavors", "👂 Listen to secrets", "👁️ See in the dark", "👃 Smell beach breeze"],
+    correctIndex: 0,
+    hint: "It helps you enjoy chocolate, strawberries, and pretzels!",
+    funFact: "You have about 10,000 taste buds, and they replace themselves every 2 weeks!"
+  },
+  {
+    id: "q-stomach-growl",
+    topic: "Tummy Rumblings 🔊",
+    question: "Why does your tummy sometimes rumble or growl when you are hungry?",
+    emoji: "🔊",
+    options: ["🔊 Muscular waves squeeze air and fluid in an empty tummy", "A tiny kitten is purring inside", "A battery needs recharging", "Your ribs are clattering"],
+    correctIndex: 0,
+    hint: "When the tummy is empty, digestive wave echoes sound louder!",
+    funFact: "The medical word for stomach rumbling is 'borborygmus' (say: bor-bo-RIG-mus)!"
+  },
+  {
+    id: "q-blood-delivery",
+    topic: "Nutrient Transport 🩸",
+    question: "How do healthy vitamins get from your intestine to your muscles and brain?",
+    emoji: "🩸",
+    options: ["🩸 Through your bloodstream highway", "🚲 On a miniature skateboard", "🪁 Carried by balloons", "Through your shoelaces"],
+    correctIndex: 0,
+    hint: "Your heart pumps blood that carries nutrients everywhere.",
+    funFact: "Within seconds of being absorbed, nutrients travel via the portal vein straight to your liver!"
+  },
+  {
+    id: "q-healthy-snacks",
+    topic: "Super Foods 🍌",
+    question: "Which snack gives your digestive system vitamins, fiber, and steady energy?",
+    emoji: "🍌",
+    options: ["🍌 A fresh banana with a cup of water", "A bowl of pure white sugar", "A slice of raw tree bark", "Empty air"],
+    correctIndex: 0,
+    hint: "It's yellow, delicious, and easy to peel!",
+    funFact: "Bananas contain pectin, a type of fiber that helps keep your gut calm and happy!"
+  },
+  {
+    id: "q-digestive-time",
+    topic: "The Big Journey 🗺️",
+    question: "About how long does the complete digestive journey take from start to finish?",
+    emoji: "🗺️",
+    options: ["🗺️ About 24 to 48 hours (1 to 2 days)", "⏱️ Exactly 3 seconds", "🗓️ 10 whole years", "100 days"],
+    correctIndex: 0,
+    hint: "Your body works carefully and thoroughly overnight to absorb nutrients.",
+    funFact: "Your digestive system works on your dinner even while you are fast asleep!"
+  },
+  {
+    id: "q-stomach-coat",
+    topic: "Stomach Protection 🛡️",
+    question: "How does the stomach protect its own walls from its strong acid?",
+    emoji: "🛡️",
+    options: ["🛡️ A thick, slippery coat of protective mucus", "A metal shield", "It wears a rain jacket", "It turns off at night"],
+    correctIndex: 0,
+    hint: "A special protective slime layer coats the inside.",
+    funFact: "Without this mucus coat, stomach acid could burn through the stomach lining!"
+  },
+  {
+    id: "q-gut-bugs-food",
+    topic: "Feeding Friendly Bugs 🥣",
+    question: "What food do your friendly gut bacteria love to eat the most?",
+    emoji: "🥣",
+    options: ["🥣 Plant fiber from fruits, oats, and veggies", "Plastic wrappers", "Salty potato chips only", "Ice cubes"],
+    correctIndex: 0,
+    hint: "They ferment colorful plant fibers and turn them into healthy vitamins!",
+    funFact: "Eating yogurt with active cultures adds billions of helpful friendly bacteria to your tummy!"
+  },
+  {
+    id: "q-epiglottis-door",
+    topic: "The Little Trapdoor 🚪",
+    question: "What tiny flap folds down over your windpipe when you swallow so food doesn't go down the wrong pipe?",
+    emoji: "🚪",
+    options: ["🚪 Epiglottis", "Eyelid", "Fingernail", "Ear canal"],
+    correctIndex: 0,
+    hint: "It acts like a railroad switch, directing food to the esophagus and air to the lungs.",
+    funFact: "If you talk and laugh while swallowing, the epiglottis might open slightly, causing a cough!"
+  }
+];
 
-  "stomach": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M28 8V16C28 16 16 18 12 30C8 42 16 52 28 54C40 56 52 48 50 34C48 22 40 16 40 16"/>
-    <path d="M28 16C36 20 40 26 40 32C40 38 34 44 26 42" stroke-width="2" stroke-dasharray="2 3"/>
-    <path d="M18 36C22 38 28 38 32 36" stroke-width="2"/>
-  </svg>`,
-
-  "small-intestine": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="12" y="12" width="40" height="40" rx="20" stroke-opacity="0.2" stroke-dasharray="4 4"/>
-    <path d="M20 22C24 18 32 18 36 22C40 26 44 26 48 22"/>
-    <path d="M16 30C22 34 26 34 32 30C38 26 42 26 48 30"/>
-    <path d="M16 38C22 38 26 44 32 44C38 44 42 38 48 38"/>
-    <path d="M22 48C26 50 34 50 38 46"/>
-  </svg>`,
-
-  "large-intestine": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M18 48V24C18 17.3726 23.3726 12 30 12H34C40.6274 12 46 17.3726 46 24V48"/>
-    <path d="M14 42C14 42 18 40 18 36C18 32 14 30 14 30C14 30 18 28 18 24"/>
-    <path d="M50 42C50 42 46 40 46 36C46 32 50 30 50 30C50 30 46 28 46 24"/>
-    <path d="M24 16C28 16 30 12 34 12"/>
-    <path d="M30 46V54"/>
-  </svg>`,
-
-  "rectum": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M26 12H38V34C38 40 42 46 42 50C42 54 38 56 32 56C26 56 22 54 22 50C22 46 26 40 26 34V12Z"/>
-    <path d="M26 24H38M26 32H38" stroke-width="2"/>
-    <ellipse cx="32" cy="50" rx="5" ry="2" stroke-width="2"/>
-  </svg>`,
-
-  "salivary": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M32 10C32 10 20 26 20 38C20 45 25 50 32 50C39 50 44 45 44 38C44 26 32 10 32 10Z"/>
-    <circle cx="28" cy="36" r="3" fill="currentColor" fill-opacity="0.3"/>
-    <circle cx="36" cy="40" r="2" fill="currentColor" fill-opacity="0.4"/>
-    <path d="M32 20C30 25 26 30 26 34" stroke-width="1.8"/>
-  </svg>`,
-
-  "liver": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 24C16 16 38 12 50 20C56 24 54 36 46 44C36 54 18 50 14 42C10 34 10 28 12 24Z"/>
-    <path d="M32 15C32 24 36 34 44 40" stroke-width="2" stroke-dasharray="3 3"/>
-    <circle cx="24" cy="30" r="3" fill="currentColor" fill-opacity="0.2"/>
-  </svg>`,
-
-  "gallbladder": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M34 10V18C34 18 42 22 44 30C46 38 42 46 34 50C26 54 20 46 22 36C24 28 30 22 30 18V10"/>
-    <path d="M28 32C32 30 36 34 38 38" stroke-width="2"/>
-    <path d="M26 10H38" stroke-width="2"/>
-  </svg>`,
-
-  "pancreas": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M16 28C16 22 22 18 28 22L46 30C52 34 52 42 46 44C40 46 34 40 26 38L18 36C16 34 16 30 16 28Z"/>
-    <path d="M22 28L44 36" stroke-width="2" stroke-dasharray="2 3"/>
-    <path d="M28 26L30 38M36 29L38 41" stroke-width="1.8"/>
-  </svg>`,
-
-  "bile": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="32" cy="32" r="20"/>
-    <circle cx="28" cy="26" r="5" fill="currentColor" fill-opacity="0.2"/>
-    <circle cx="38" cy="34" r="4" fill="currentColor" fill-opacity="0.2"/>
-    <circle cx="26" cy="38" r="3" fill="currentColor" fill-opacity="0.2"/>
-    <path d="M18 32C22 30 26 34 30 32C34 30 38 34 42 32C46 30 48 32 48 32"/>
-  </svg>`,
-
-  "gastric-juice": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M20 12H44V20L38 30V48C38 52 34 54 30 54H26C22 54 20 50 20 46V12Z"/>
-    <path d="M20 20H44"/>
-    <path d="M22 36C26 34 30 38 34 36C38 34 40 36 40 36" stroke-width="2"/>
-    <circle cx="28" cy="44" r="2.5" fill="currentColor"/>
-    <circle cx="34" cy="41" r="1.5" fill="currentColor"/>
-    <path d="M30 6V12"/>
-  </svg>`,
-
-  "enzyme-carb": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="32" cy="32" r="18"/>
-    <path d="M24 24L40 40M40 24L24 40" stroke-width="2.5"/>
-    <circle cx="24" cy="24" r="3" fill="currentColor"/>
-    <circle cx="40" cy="40" r="3" fill="currentColor"/>
-    <circle cx="40" cy="24" r="3" fill="currentColor"/>
-    <circle cx="24" cy="40" r="3" fill="currentColor"/>
-  </svg>`,
-
-  "enzyme-protein": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="14" y="20" width="36" height="24" rx="12"/>
-    <path d="M26 20V44M38 20V44" stroke-width="2" stroke-dasharray="2 3"/>
-    <circle cx="20" cy="32" r="3" fill="currentColor" fill-opacity="0.3"/>
-    <circle cx="32" cy="32" r="3" fill="currentColor" fill-opacity="0.3"/>
-    <circle cx="44" cy="32" r="3" fill="currentColor" fill-opacity="0.3"/>
-  </svg>`,
-
-  "enzyme-fat": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M20 16C20 16 28 20 28 32C28 44 20 48 20 48"/>
-    <path d="M32 16C32 16 40 20 40 32C40 44 32 48 32 48"/>
-    <circle cx="20" cy="16" r="4" fill="currentColor" fill-opacity="0.3"/>
-    <circle cx="32" cy="16" r="4" fill="currentColor" fill-opacity="0.3"/>
-    <circle cx="44" cy="16" r="4" fill="currentColor" fill-opacity="0.3"/>
-    <path d="M44 16C44 16 50 20 50 32C50 44 44 48 44 48"/>
-  </svg>`,
-
-  "villi": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 52H52"/>
-    <path d="M18 52V24C18 20 24 20 24 24V52"/>
-    <path d="M28 52V16C28 12 34 12 34 16V52"/>
-    <path d="M38 52V22C38 18 44 18 44 22V52"/>
-    <path d="M21 28V36M31 22V36M41 28V36" stroke-width="1.8" stroke-dasharray="2 2"/>
-  </svg>`,
-
-  "peristalsis": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 24C20 24 22 18 30 18C38 18 40 24 48 24C52 24 54 22 54 22"/>
-    <path d="M12 40C20 40 22 34 30 34C38 34 40 40 48 40C52 40 54 38 54 38"/>
-    <circle cx="30" cy="26" r="5" fill="currentColor" fill-opacity="0.4"/>
-    <path d="M28 26L34 26" stroke-width="2"/>
-    <path d="M31 23L34 26L31 29" stroke-width="2"/>
-  </svg>`,
-
-  "microbiome": `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="14" y="24" width="22" height="12" rx="6" transform="rotate(-20 25 30)"/>
-    <rect x="28" y="32" width="24" height="12" rx="6" transform="rotate(30 40 38)"/>
-    <circle cx="42" cy="18" r="5"/>
-    <circle cx="20" cy="46" r="4"/>
-    <circle cx="30" cy="16" r="2" fill="currentColor"/>
-    <circle cx="48" cy="48" r="2.5" fill="currentColor"/>
-  </svg>`
-};
+// Helper to get a random question (avoiding immediate repeats)
+let _lastQuestionId = null;
+function getRandomDigestiveQuestion() {
+  const available = DIGESTIVE_ROLL_QUESTIONS.filter(q => q.id !== _lastQuestionId);
+  const q = available[Math.floor(Math.random() * available.length)];
+  _lastQuestionId = q.id;
+  return q;
+}

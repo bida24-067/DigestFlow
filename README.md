@@ -1,63 +1,55 @@
-# DigestFlow — Interactive Human Digestive System Learning
+# 🏖️ DigestBeach: Educational Digestive System Games
 
-An educational web game designed for students to master the human digestive system through progressive inquiry, interactive tactile feedback, and fluid Apple-style motion design.
-
----
-
-## 🌟 Key Features
-
-### 1. Educational Curriculum (3 Progressive Levels)
-- **Level 1: The Core Journey (Foundations)**
-  - *Mouth* — Ingestion, mastication, salivary bolus formation.
-  - *Esophagus* — Peristaltic propulsion down the 25cm muscular food pipe.
-  - *Stomach* — Gastric acid churning, protease activation, chyme synthesis.
-  - *Small Intestine* — 6-meter nutrient absorption epicentre with duodenum, jejunum, ileum.
-  - *Large Intestine* — Water reabsorption, electrolyte balance, stool compaction.
-  - *Rectum & Anus* — Sphincter control, temporary storage, and egestion.
-
-- **Level 2: The Helper Squad (Accessory Organs & Secretions)**
-  - *Salivary Glands* — Parotid, submandibular, sublingual amylase secretion.
-  - *Liver* — Metabolic powerhouse, toxin filtration, continuous bile synthesis.
-  - *Gallbladder* — Bile concentration and timed squirts into the duodenum.
-  - *Pancreas* — Dual organ delivering bicarbonate neutralizer and key digestive enzymes.
-  - *Bile* — Alkaline fluid emulsifying lipid droplets for lipase digestion.
-  - *Gastric Juice / HCl* — Low pH (~1.5–2) fluid unraveling proteins and eliminating pathogens.
-
-- **Level 3: Microscopic & Molecular Mastery (Advanced)**
-  - *Amylase* — Carbohydrate and starch cleavage into disaccharides.
-  - *Pepsin* — Gastric protease breaking proteins into smaller peptide chains.
-  - *Lipase* — Lipid hydrolysis into free fatty acids and glycerol.
-  - *Villi & Microvilli* — 60x surface area multipliers with capillary beds and lacteals.
-  - *Peristalsis* — Autonomous smooth muscle wave contractions.
-  - *Gut Microbiome* — Trillions of symbiotic bacteria fermenting fiber and producing vitamins.
+A vibrant tropical beach board game and puzzle experience designed for primary school students (ages 6–11) to master the human digestive system through playful mechanics, kid-friendly multiple choice questions, and interactive puzzle blasting.
 
 ---
 
-## 🎨 Apple Design System (Graphic Designed Canvas & Crisp Solid Colors)
-Crafted strictly adhering to the **Apple Design Skill**:
-- **Graphic Designed Vector Background**: Features an intricate, crisp biological architectural blueprint with continuous digestive flow paths, technical coordinate grid, gastric rugae folds, microvilli brush border diagrams, glucose rings ($C_6H_{12}O_6$), active catalytic sites, and water secretion markers.
-- **Pure Solid Color Palette (No Muddy Gradients)**: Bold, punchy, high-contrast solid hues (Coral `#FF3B5C`, Cobalt `#0084FF`, Amber `#FF9500`, Emerald `#00B37E`, Violet `#7952DE`, Berry `#E0245E`) paired with crisp white typography.
-- **Discovery-First Inquiry**: Mystery stages challenge students directly with diagnostic riddles and progressive hints, preserving the fun of deduction without spoiling organ identities.
-- **Response**: Immediate tactile scale feedback (`scale(0.97)`) on pointer-down.
-- **Physical Motion & Springs**: 3D perspective flip cards with Apple spring curves (`cubic-bezier(0.2, 0.9, 0.3, 1)` and `cubic-bezier(0.34, 1.45, 0.64, 1)`).
-- **Multimodal Feedback**: Zero-dependency Web Audio API synthesizer generating real-time tactile micro-clicks, whooshes, harmonic chimes, gentle error bumps, and celebration fanfares + Vibration API haptics.
-- **Initial Boot Experience**: Apple-style boot screen with a solid graphic badge, rotating four-color frame, and clean solid progress bar.
-- **Inclusive Accessibility**: Non-punitive forgiving text matching (handles case-insensitivity, aliases, minor typos via Levenshtein distance), progressive hint disclosures, keyboard navigation (`Enter` to submit, `Esc` to flip back), and `@media (prefers-reduced-motion)` fallbacks.
+## 🌟 Game Modes
+
+### 1. 🎲 Tropical Snakes & Ladders Board Game
+- **Interactive 6×6 Board (36 Tiles)**: Follows a winding serpentine path across a sunny beach, from **Tile 1 (START: Mouth & Teeth Station 👄)** to **Tile 36 (Grand Finish Champion 🏆)**.
+- **Question on Every Dice Roll**:
+  - Every time the 3D beach die is rolled, an engaging digestive question is presented with 4 large tap buttons and a helpful hint.
+  - **1 Point Awarded** for every correct answer, tracked live in the scoreboard!
+- **Bot Turns Require Player Input**:
+  - When playing vs **Barnaby Crab (CPU)**, Crab rolls the die and asks the student to help solve the question!
+  - Correct answers award points to the student and Crab happily scuttles forward!
+- **🌟 Lucky 6 Rewards**:
+  - Rolling a **6** triggers the **Double Question Challenge** (2 questions in sequence!).
+  - Earn up to **+2 Points** (1 per question).
+  - Gives a **Free Extra Roll** after leaping 6 steps forward!
+- **Full Journey Progress Visualization**:
+  - **Live Progress Bar**: Fills smoothly from 0% to 100% with contextual organ updates (`Tile 14 of 36 • Liver & Bile Factory`).
+  - **Milestone Checkpoints**: 👄 Mouth (1) ➔ 🎢 Food Pipe (5) ➔ 🧪 Stomach (9) ➔ 🏭 Liver (13) ➔ 🌿 Small Intestine (27) ➔ 🌊 Large Intestine (31) ➔ 🏆 Finish (36).
+  - **Sand Footstep Trail**: All visited squares glow with a warm tropical sand trail and `👣` footsteps marking the journey completed so far.
+  - **Active Tile Pulse**: The current tile is highlighted with an animated ocean glow.
+- **Classic Ladders & Sea Snakes**:
+  - 🪜 **Bamboo Ladders**: Climb up for great chewing, fiber, and bile boosts.
+  - 🐍 **Sea Snakes**: Slide down when swallowing whole food or drinking fizzy soda.
 
 ---
 
-## 🚀 How to Run
+### 2. 🧩 Digestive Block Blast Mini-Game
+- **In-App Toggle**: Switch between the board game and Block Blast instantly using the top navigation pill (`🧩 Block Blast Mini-Game` / `🎲 Back to Board Game`).
+- **Fluid Drag & Drop (Touch & Mouse)**:
+  - Drag shapes directly from the tray onto the 8×8 grid with live finger/cursor tracking and glowing drop shadow.
+  - Touch-optimized with an ergonomic finger offset so you can clearly see the board underneath.
+- **Tap-to-Select Accessible Fallback**:
+  - Tap any piece in the tray to select it, then tap anywhere on the board to drop it!
+- **Educational Digestive Word Matching**:
+  - Pieces hold digestive words (`Mouth 👄`, `Stomach 🧪`, `Liver 🏭`) and meanings (`Chews food`, `Acid blender`, `Cleans blood`).
+  - **Adjacent Match Blast**: Placing a Word block directly touching its Meaning block triggers an instant golden match burst (`+250 Points`)!
+  - **Line Blasts**: Fill complete 8-block rows or columns to trigger block blasts, sound effects, and combo multipliers (`x2`, `x3`, etc.).
 
-Because **DigestFlow** is built with pure static HTML, CSS, and modern JavaScript:
+---
 
-### Method 1: Direct File Opening
-Double-click `index.html` in Finder or open it directly in any modern browser (Safari, Chrome, Edge, Firefox).
+## 🚀 How to Run Locally
 
-### Method 2: Local Static Server
+Because the project is built with vanilla HTML5, CSS3, and modern Web APIs, no build tools or package managers are required!
+
+Simply open `index.html` in any browser, or run a local server:
+
 ```bash
-# Using Python 3 built-in HTTP server:
 python3 -m http.server 8000
-
-# Open in browser:
-http://localhost:8000
 ```
+Then visit `http://localhost:8000` in your web browser.

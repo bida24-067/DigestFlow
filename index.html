@@ -3,306 +3,458 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DigestFlow — Interactive Digestive System Learning</title>
-  <meta name="description" content="An interactive, Apple-designed educational game to discover and master the human digestive system.">
-  <meta name="theme-color" content="#090b10">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+  <title>DigestBeach 🏖️ — Digestive System Board Game & Block Blast</title>
+  <meta name="description" content="A fun beach board game and Block Blast mini-game matching digestive words to simple meanings!">
+  <meta name="theme-color" content="#BAE6FD">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏖️</text></svg>">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- ========================================================================
-       Apple-Style Boot & Loading Screen
-       ======================================================================== -->
-  <div id="loadingScreen" aria-label="DigestFlow is loading">
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
     <div class="loader-container">
       <div class="loader-emblem">
-        <div class="loader-emblem-glow"></div>
-        <div class="loader-emblem-ring"></div>
-        <div class="loader-emblem-icon">
-          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M32 10C32 10 20 26 20 38C20 45 25 50 32 50C39 50 44 45 44 38C44 26 32 10 32 10Z"/>
-            <path d="M22 28C24 36 40 36 42 28"/>
-            <circle cx="32" cy="38" r="4" fill="currentColor" fill-opacity="0.4"/>
-          </svg>
-        </div>
+        <span style="font-size: 3rem;">🎲</span>
       </div>
-      <h1 class="loader-title">DigestFlow</h1>
-      <p class="loader-tagline">Human Gastrointestinal Physiology & Discovery</p>
-      <div class="loader-bar-wrap">
-        <div class="loader-bar-fill" id="loaderBarFill"></div>
-      </div>
-      <div class="loader-status" id="loaderStatus">Initializing system pathways...</div>
+      <h1 class="loader-title">🏖️ DigestBeach</h1>
+      <p class="loader-tagline">Digestive System Board Game & Block Blast!</p>
+      <div class="loader-status">Setting up the beach board, ladders, and puzzles...</div>
     </div>
   </div>
 
-  <!-- Graphic Designed Vector Background -->
+  <!-- Tropical Beach Scene Background -->
   <div class="graphic-bg-container" aria-hidden="true">
-    <svg class="graphic-bg-svg" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Technical Grid & Coordinate Accents -->
+    <svg class="graphic-bg-svg" viewBox="0 0 1440 900" fill="none" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <pattern id="gridPattern" width="60" height="60" patternUnits="userSpaceOnUse">
-          <circle cx="30" cy="30" r="1.2" fill="#364463" />
-          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1D263B" stroke-width="0.5" />
-        </pattern>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#BAE6FD"/>
+          <stop offset="60%" stop-color="#7DD3FC"/>
+          <stop offset="100%" stop-color="#FDE68A"/>
+        </linearGradient>
+        <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.75"/>
+          <stop offset="100%" stop-color="#0284C7" stop-opacity="0.55"/>
+        </linearGradient>
+        <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FDE68A"/>
+          <stop offset="100%" stop-color="#FCD34D"/>
+        </linearGradient>
       </defs>
-      <rect width="100%" height="100%" fill="url(#gridPattern)" />
 
-      <!-- Stylized Continuous Digestive Flow Path -->
-      <path d="M 160 -40 C 160 80 220 140 220 220 C 220 310 170 360 210 460 C 250 560 360 520 420 620 C 480 720 380 840 450 940" 
-            stroke="#0071E3" stroke-width="2.5" stroke-dasharray="8 6" opacity="0.6"/>
-      <path d="M 1280 -40 C 1280 120 1200 240 1240 380 C 1280 520 1140 640 1180 780 C 1220 900 1320 960 1340 1020" 
-            stroke="#00B37E" stroke-width="2" stroke-dasharray="12 8" opacity="0.5"/>
+      <rect width="1440" height="900" fill="url(#skyGrad)"/>
+      <circle cx="1260" cy="110" r="65" fill="#FDE68A" opacity="0.8"/>
+      <circle cx="1260" cy="110" r="48" fill="#FCD34D" opacity="0.9"/>
+      
+      <!-- Ocean -->
+      <path d="M0 480 C 120 465 240 495 360 475 C 480 455 600 485 720 470 C 840 455 960 482 1080 466 C 1200 450 1320 474 1440 460 L1440 680 L0 680 Z" fill="url(#oceanGrad)"/>
+      <path d="M0 500 C 180 488, 360 514, 540 498 C 720 482, 900 510, 1080 494 C 1260 478, 1380 496, 1440 490" stroke="#BAE6FD" stroke-width="2.5" fill="none" opacity="0.55"/>
 
-      <!-- Graphic Organ Silhouette: Stomach Outline & Rugae Folds -->
-      <g transform="translate(1100, 140)" stroke="#FF9500" stroke-width="1.8" opacity="0.4">
-        <path d="M 80 0 C 80 40 40 50 20 80 C 0 120 20 170 60 190 C 110 210 160 180 170 120 C 180 60 140 30 140 0" />
-        <path d="M 50 80 Q 90 100 80 140" stroke-dasharray="4 4"/>
-        <path d="M 90 70 Q 120 110 110 150" stroke-dasharray="4 4"/>
-        <circle cx="80" cy="110" r="3" fill="#FF9500"/>
-        <text x="190" y="100" fill="#FF9500" font-family="-apple-system, sans-serif" font-size="10" font-weight="700" letter-spacing="2">GASTRIC CAVITY // pH 1.8</text>
+      <!-- Sand -->
+      <path d="M0 600 C 120 580 240 610 360 595 C 480 580 600 608 720 592 C 840 576 960 604 1080 588 C 1200 572 1320 596 1440 582 L1440 900 L0 900 Z" fill="url(#sandGrad)"/>
+
+      <!-- Palm Trees -->
+      <g transform="translate(60, 360)">
+        <path d="M20 280 C 18 210, 12 145, 22 80 C 28 40, 20 10, 18 0" stroke="#92400E" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M18 0 C -30 -40, -70 -20, -80 10" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M18 0 C 10 -50, 40 -65, 70 -50" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M18 0 C -10 -55, -5 -80, 15 -90" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M18 0 C 40 -45, 70 -35, 90 -10" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
       </g>
-
-      <!-- Graphic Organ Silhouette: Microscopic Villi Brush Border -->
-      <g transform="translate(80, 520)" stroke="#00B37E" stroke-width="2" opacity="0.45">
-        <path d="M 0 120 L 400 120" />
-        <path d="M 20 120 V 50 C 20 40 35 40 35 50 V 120" />
-        <path d="M 50 120 V 30 C 50 20 65 20 65 30 V 120" />
-        <path d="M 80 120 V 45 C 80 35 95 35 95 45 V 120" />
-        <path d="M 110 120 V 25 C 110 15 125 15 125 25 V 120" />
-        <path d="M 140 120 V 48 C 140 38 155 38 155 48 V 120" />
-        <path d="M 170 120 V 32 C 170 22 185 22 185 32 V 120" />
-        <text x="20" y="145" fill="#00B37E" font-family="-apple-system, sans-serif" font-size="10" font-weight="700" letter-spacing="2">INTESTINAL VILLI // 32 m² ABSORPTION</text>
+      <g transform="translate(1330, 330)">
+        <path d="M20 300 C 22 230, 26 165, 18 100 C 14 55, 22 18, 20 5" stroke="#92400E" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <path d="M20 5 C -25 -38, -65 -18, -75 12" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M20 5 C 15 -48, 45 -62, 72 -45" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M20 5 C -8 -52, -2 -75, 18 -88" stroke="#22C55E" stroke-width="8" fill="none" stroke-linecap="round"/>
       </g>
-
-      <!-- Chemical Structures & Enzyme Lock-and-Key Glyphs -->
-      <!-- Glucose Ring Hexagon -->
-      <g transform="translate(1220, 620)" stroke="#7952DE" stroke-width="1.8" opacity="0.5">
-        <polygon points="40,10 70,25 70,60 40,75 10,60 10,25" />
-        <circle cx="40" cy="10" r="3" fill="#7952DE"/>
-        <circle cx="70" cy="25" r="3" fill="#7952DE"/>
-        <circle cx="70" cy="60" r="3" fill="#7952DE"/>
-        <circle cx="40" cy="75" r="3" fill="#7952DE"/>
-        <circle cx="10" cy="60" r="3" fill="#7952DE"/>
-        <circle cx="10" cy="25" r="3" fill="#7952DE"/>
-        <line x1="70" y1="25" x2="90" y2="15" />
-        <text x="-10" y="105" fill="#7952DE" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" letter-spacing="1.5">C₆H₁₂O₆ (GLUCOSE)</text>
-      </g>
-
-      <!-- Enzyme Catalytic Substrate Lock & Key -->
-      <g transform="translate(90, 160)" stroke="#FF3B5C" stroke-width="1.8" opacity="0.45">
-        <path d="M 10 20 H 60 V 40 C 60 50 75 50 75 40 V 20 H 120 V 80 H 10 Z" />
-        <path d="M 58 40 C 58 48 77 48 77 40" stroke-dasharray="2 3"/>
-        <text x="10" y="105" fill="#FF3B5C" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" letter-spacing="1.5">ACTIVE CATALYTIC SITE</text>
-      </g>
-
-      <!-- Technical Crosshairs & Biology Data Markers -->
-      <g stroke="#364463" stroke-width="1.2">
-        <line x1="720" y1="40" x2="720" y2="70" />
-        <line x1="705" y1="55" x2="735" y2="55" />
-        <circle cx="720" cy="55" r="10" fill="none" />
-
-        <line x1="680" y1="840" x2="760" y2="840" />
-        <line x1="720" y1="800" x2="720" y2="880" />
-      </g>
-
-      <!-- Decorative Anatomical Water Molecules -->
-      <g transform="translate(740, 750)" stroke="#0284C7" stroke-width="1.5" opacity="0.45">
-        <circle cx="20" cy="20" r="10" />
-        <circle cx="34" cy="10" r="5" />
-        <circle cx="6" cy="10" r="5" />
-        <text x="-15" y="45" fill="#0284C7" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" letter-spacing="1">H₂O SECRETIONS</text>
-      </g>
-
     </svg>
   </div>
 
-  <!-- ========================================================================
-       Top Navigation Bar (Translucent Apple Material)
-       ======================================================================== -->
+  <!-- Top Navigation Bar -->
   <nav class="top-nav">
     <div class="nav-container">
       <div class="brand-wrap" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <div class="brand-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-          </svg>
-        </div>
+        <div class="brand-icon-box">🏖️</div>
         <div class="brand-title-group">
-          <span class="brand-name">DigestFlow</span>
-          <span class="brand-edition">Interactive Physiology</span>
+          <span class="brand-name">DigestBeach</span>
+          <span class="brand-edition">Digestive Learning Games</span>
         </div>
       </div>
 
       <div class="nav-actions">
+        <!-- Mode Switcher Pill (Snakes & Ladders <-> Block Blast) -->
+        <button id="gameModeToggleBtn" class="nav-btn mode-switch-btn" onclick="openBlockBlastMiniGame()">
+          <span>🧩 Block Blast Mini-Game</span>
+        </button>
+
         <div class="score-stats-cluster">
-          <div class="stat-pill stat-pill-score" title="Total Accumulated Score">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-            <span>Score: <b id="scoreDisplay">0</b></span>
+          <div class="stat-pill stat-pill-score">
+            <span>⭐</span>
+            <span>Points: <b id="scoreDisplay">0</b></span>
           </div>
-          <div class="stat-pill stat-pill-streak" title="Current Winning Streak">
-            <span>🔥</span>
-            <span>Streak: <b id="streakDisplay">0</b></span>
+          <div class="stat-pill stat-pill-cards">
+            <span>🎯</span>
+            <span>Solved: <b id="cardsUnlockedDisplay">0</b></span>
           </div>
         </div>
 
         <button id="soundToggleBtn" class="nav-btn" aria-label="Toggle sound feedback">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          </svg>
-          <span>Sound On</span>
+          <span>🔊 Sound On</span>
+        </button>
+
+        <button class="nav-btn restart-btn" onclick="game.restartGame()" title="Restart Game">
+          <span>🔄 New Game</span>
         </button>
       </div>
     </div>
   </nav>
 
-  <!-- ========================================================================
-       Main App Layout
-       ======================================================================== -->
+  <!-- Main App Layout -->
   <main class="app-container">
-    
-    <!-- Level Hero Banner -->
-    <header class="level-hero">
-      <div class="level-meta-row">
-        <div class="level-pill-badge">
-          <span class="level-pill-dot"></span>
-          <span id="levelBadge">Foundations</span>
+
+    <!-- ======================================================================
+         VIEW 1: SNAKES & LADDERS BOARD GAME
+         ====================================================================== -->
+    <div id="snakesGameView">
+      
+      <!-- Top Settings Banner (Game Mode & Character Pick) -->
+      <header class="snakes-hero-card">
+        <div class="snakes-hero-top">
+          <div class="mode-selector-wrap">
+            <span class="section-label">Game Mode:</span>
+            <div class="mode-tabs">
+              <button class="mode-tab-btn active" data-mode="vs-cpu" onclick="game.setGameMode('vs-cpu')">
+                <span>🤖 vs Crabby (CPU)</span>
+              </button>
+              <button class="mode-tab-btn" data-mode="pass-and-play" onclick="game.setGameMode('pass-and-play')">
+                <span>👥 2 Players</span>
+              </button>
+              <button class="mode-tab-btn" data-mode="solo" onclick="game.setGameMode('solo')">
+                <span>🏄 Solo Explorer</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="avatar-selector-wrap">
+            <span class="section-label">Choose P1:</span>
+            <div class="buddy-list">
+              <button class="buddy-pick-btn active" data-buddy="surfer" onclick="game.selectBuddy('surfer')">
+                <span>🏄‍♂️ Surfer</span>
+              </button>
+              <button class="buddy-pick-btn" data-buddy="turtle" onclick="game.selectBuddy('turtle')">
+                <span>🐢 Turtle</span>
+              </button>
+              <button class="buddy-pick-btn" data-buddy="dolphin" onclick="game.selectBuddy('dolphin')">
+                <span>🐬 Dolphin</span>
+              </button>
+              <button class="buddy-pick-btn" data-buddy="pizza" onclick="game.selectBuddy('pizza')">
+                <span>🍕 Pizza</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="stat-pill">
-          <span id="levelProgressText">0 of 6 Solved</span>
+
+        <!-- Quick Legend with Lucky 6 Perks -->
+        <div class="snakes-legend-bar">
+          <span class="legend-item"><span class="legend-badge ladder">🪜 Ladders</span> Climb UP for healthy digestion!</span>
+          <span class="legend-item"><span class="legend-badge snake">🐍 Snakes</span> Slide DOWN when food causes hiccups!</span>
+          <span class="legend-item"><span class="legend-badge organ">🎯 Questions</span> 1 Point for every correct answer on each roll!</span>
+          <span class="legend-item"><span class="legend-badge lucky6">🌟 Roll a 6</span> 2 Questions (Double Points) + Bonus Extra Roll!</span>
         </div>
+      </header>
+
+      <!-- Digestive Journey Progress Bar (Start -> Waypoints -> Finish) -->
+      <section class="journey-tracker-card" id="journeyTrackerCard" aria-label="Digestive Journey Progress">
+        <div class="journey-header-row">
+          <div class="journey-title-wrap">
+            <span class="journey-icon">🗺️</span>
+            <div>
+              <div class="journey-title">Digestive System Journey Progress</div>
+              <div class="journey-status-text" id="journeyStatusText">Tile 1 of 36 • Mouth & Chewing Station (Start of Journey!)</div>
+            </div>
+          </div>
+          <div class="journey-pct-badge" id="journeyPctBadge">3% Complete</div>
+        </div>
+
+        <!-- Animated Progress Track with Milestones -->
+        <div class="journey-bar-track">
+          <div class="journey-bar-fill" id="journeyBarFill" style="width: 3%;"></div>
+          <div class="journey-avatar-marker" id="journeyAvatarP1" title="Player 1 Position" style="left: 3%;">🏄‍♂️</div>
+          <div class="journey-avatar-marker p2-marker" id="journeyAvatarP2" title="Player 2 / Barnaby Crab Position" style="left: 3%;">🦀</div>
+        </div>
+
+        <!-- Key Milestones Along the Digestive Tract -->
+        <div class="journey-milestones">
+          <span class="milestone-chip active" id="ms-mouth">👄 Mouth (1)</span>
+          <span class="milestone-arrow">➔</span>
+          <span class="milestone-chip" id="ms-esophagus">🎢 Food Pipe (5)</span>
+          <span class="milestone-arrow">➔</span>
+          <span class="milestone-chip" id="ms-stomach">🧪 Stomach (9)</span>
+          <span class="milestone-arrow">➔</span>
+          <span class="milestone-chip" id="ms-liver">🏭 Liver (13)</span>
+          <span class="milestone-arrow">➔</span>
+          <span class="milestone-chip" id="ms-small">🌿 Sm. Intestine (27)</span>
+          <span class="milestone-arrow">➔</span>
+          <span class="milestone-chip" id="ms-large">🌊 Lg. Intestine (31)</span>
+          <span class="milestone-arrow">➔</span>
+          <span class="milestone-chip" id="ms-finish">🏆 Finish (36)</span>
+        </div>
+      </section>
+
+      <!-- Main Game Area: Board + Dice Station -->
+      <div class="snakes-play-layout">
+        
+        <!-- The Snakes & Ladders Board -->
+        <div class="board-wrapper">
+          <div class="board-frame">
+            <!-- SVG Overlay for Ladders and Snakes -->
+            <svg class="snakes-svg-layer" id="snakesSvgOverlay"></svg>
+            
+            <!-- 6x6 Grid Squares -->
+            <div class="snakes-grid-container" id="snakesBoardGrid"></div>
+          </div>
+        </div>
+
+        <!-- Right Control Sidebar: Dice, Turn Status & Rules -->
+        <div class="sidebar-station">
+          
+          <!-- Turn Status Banner -->
+          <div class="turn-status-card">
+            <div class="turn-banner-text" id="diceBannerText">
+              🏄 Player 1's Turn! Tap Roll Dice or press Spacebar!
+            </div>
+          </div>
+
+          <!-- 3D Dice Roller -->
+          <div class="dice-box-card">
+            <div class="die-3d-wrapper" onclick="game.rollDice()">
+              <div class="beach-die" id="beachDie" data-value="1">
+                <div class="pip center"></div>
+              </div>
+              <div class="die-shadow"></div>
+            </div>
+
+            <button class="big-roll-btn" id="rollDiceBtn" onclick="game.rollDice()">
+              <span>🎲 ROLL DICE!</span>
+            </button>
+            <div class="spacebar-hint">or press Spacebar ⌨️</div>
+          </div>
+
+          <!-- Player Positions & Points Summary -->
+          <div class="player-status-card">
+            <div class="p-card-title">Players on Board:</div>
+            <div class="player-pill p1-pill">
+              <span class="p-avatar">🏄‍♂️</span>
+              <span class="p-name">Player 1</span>
+              <span class="p-pos" id="p1PosBadge">Tile 1</span>
+              <span class="p-points-badge" id="p1PointsBadge">0 pts</span>
+            </div>
+            <div class="player-pill p2-pill" id="p2PillBox">
+              <span class="p-avatar">🦀</span>
+              <span class="p-name" id="p2NameBadge">Barnaby Crab</span>
+              <span class="p-pos" id="p2PosBadge">Tile 1</span>
+              <span class="p-points-badge" id="p2PointsBadge">0 pts</span>
+            </div>
+          </div>
+
+          <!-- Quick Tip -->
+          <div class="tip-card">
+            💡 <strong>Rules & Rewards:</strong> Every roll triggers a question (+1 point per correct answer!). Roll a <strong>6</strong> to earn <strong>2 Questions</strong> and a <strong>Free Extra Turn</strong>!
+          </div>
+
+        </div>
+
       </div>
 
-      <h2 class="level-headline" id="levelHeadline">Level 1: The Core Journey</h2>
-      <p class="level-description" id="levelDescription">
-        Follow food as it travels through the primary hollow muscular organs of the GI tract. Tap each card to inspect the diagnostic clues, enter the organ name, and unlock biological insights.
-      </p>
+    </div>
 
-      <!-- Level Switcher Tabs -->
-      <div class="level-tabs" role="tablist" aria-label="Digestive System Levels">
-        <button class="level-tab-btn active" role="tab" data-level="0" aria-selected="true">
-          <span>Level 1</span>
-          <span class="level-tab-badge">Core Tract</span>
-        </button>
-        <button class="level-tab-btn" role="tab" data-level="1" aria-selected="false">
-          <span>Level 2</span>
-          <span class="level-tab-badge">Accessory</span>
-        </button>
-        <button class="level-tab-btn" role="tab" data-level="2" aria-selected="false">
-          <span>Level 3</span>
-          <span class="level-tab-badge">Molecular</span>
-        </button>
+    <!-- ======================================================================
+         VIEW 2: BLOCK BLAST MINI-GAME (MATCH WORDS & MEANINGS)
+         ====================================================================== -->
+    <div id="blockBlastGameView" style="display: none;">
+      
+      <!-- Block Blast Header Banner -->
+      <header class="bb-hero-card">
+        <div class="bb-hero-row">
+          <div>
+            <h2 class="bb-title">💥 Digestive Block Blast!</h2>
+            <p class="bb-subtitle">Drag or tap shapes onto the 8×8 grid. Clear lines & match <strong>Words</strong> to their <strong>Meanings</strong> for massive combo blasts!</p>
+          </div>
+          <button class="nav-btn close-bb-btn" onclick="closeBlockBlastMiniGame()">
+            <span>🎲 Back to Snakes & Ladders</span>
+          </button>
+        </div>
+
+        <!-- Block Blast Scoreboard Cluster -->
+        <div class="bb-stats-row">
+          <div class="stat-pill" style="border-color: #F59E0B; background: #FFFBEB;">
+            <span>⭐ Score: <b id="bbScoreDisplay">0</b></span>
+          </div>
+          <div class="stat-pill" style="border-color: #0EA5E9; background: #F0F9FF;">
+            <span>🏆 Best: <b id="bbHighScoreDisplay">0</b></span>
+          </div>
+          <div class="stat-pill" style="border-color: #EC4899; background: #FDF2F8;">
+            <span>Streak: <b id="bbComboDisplay">x1</b></span>
+          </div>
+          <button class="nav-btn restart-btn" onclick="blockBlastGame.restartGame()">
+            <span>🔄 Restart Puzzle</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Block Blast Play Area: 8x8 Board + Pieces Tray + Matching Book -->
+      <div class="bb-play-layout">
+        
+        <!-- Left: 8x8 Sandy Board & Piece Tray -->
+        <div class="bb-board-column">
+          <div class="bb-board-frame">
+            <!-- 8x8 Grid -->
+            <div class="bb-grid-container" id="bbGrid"></div>
+          </div>
+
+          <!-- Bottom Pieces Tray (3 draggable / clickable shapes) -->
+          <div class="bb-tray-container">
+            <div class="bb-tray-hint">👉 Tap a shape below, then tap any open square on the board!</div>
+            <div class="bb-pieces-tray" id="bbPiecesTray"></div>
+          </div>
+        </div>
+
+        <!-- Right: Digestive Word Match Collection & How to Play -->
+        <div class="bb-sidebar-column">
+          
+          <!-- Word Match Targets Card -->
+          <div class="bb-targets-card">
+            <div class="bb-card-title">
+              <span>📖 Digestive Word Matches:</span>
+              <span style="font-size: 0.8rem; font-weight: 700; color: #0284C7;">Match adjacent or clear in a blast!</span>
+            </div>
+            
+            <div class="bb-pairs-list" id="bbPairsList">
+              <!-- Rendered by block-blast.js -->
+            </div>
+          </div>
+
+          <!-- How to Play Card -->
+          <div class="bb-rules-card">
+            <div class="bb-rules-title">💡 How to Play Block Blast:</div>
+            <ul class="bb-rules-list">
+              <li>🧱 <strong>Place Shapes:</strong> Select a piece and tap any valid spot on the 8×8 board.</li>
+              <li>💥 <strong>Line Blast:</strong> Fill any full horizontal row or vertical column to BLAST it for points!</li>
+              <li>🌟 <strong>Word Match:</strong> Place a <strong>Word</strong> (e.g. Mouth 👄) next to its <strong>Meaning</strong> (e.g. Chews food) for an instant <strong>+250 Star Explosion!</strong></li>
+              <li>🔥 <strong>Combos:</strong> Clear multiple lines or make consecutive blasts to multiply your points!</li>
+            </ul>
+          </div>
+
+        </div>
+
       </div>
-    </header>
 
-
-
-    <!-- 3D Card Grid Container -->
-    <section class="cards-grid" id="cardsGrid" aria-label="Digestive System Cards">
-      <!-- Cards rendered dynamically by game.js -->
-    </section>
+    </div>
 
   </main>
 
-  <!-- ========================================================================
-       Level Complete Modal Sheet
-       ======================================================================== -->
-  <div class="modal-scrim" id="levelCompleteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-sheet">
-      <div class="modal-icon-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-          <polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
+  <!-- Question Modal (Triggered on every dice roll & Lucky 6 challenges) -->
+  <div class="modal-scrim" id="organQuestionModal" role="dialog" aria-modal="true">
+    <div class="modal-sheet organ-modal-sheet">
+      <div class="modal-challenge-header" id="modalChallengeHeader">🎲 Question Challenge!</div>
+      
+      <div class="modal-organ-badge" id="modalOrganIcon">
+        <span>👄</span>
       </div>
-      <h3 class="modal-title" id="modalTitle">Level Mastered!</h3>
-      <p class="modal-subtitle" id="modalSubtitle">
-        Outstanding work! You have successfully solved all diagnostic cards in this tier.
+      <div class="modal-organ-tag" id="modalOrganTag">Organ Quiz</div>
+      
+      <div class="modal-riddle-box">
+        <div class="riddle-bubble-icon" id="modalQuestionLabel">🗣️ Question:</div>
+        <p class="modal-riddle-text" id="modalOrganRiddle">
+          Where does your food begin its journey through your body?
+        </p>
+      </div>
+
+      <div class="modal-hint-box" id="modalHintBox" style="display: none;"></div>
+      <div class="modal-funfact-box" id="modalFunFactBox" style="display: none;"></div>
+
+      <div class="kid-options-grid" id="modalOptionsContainer"></div>
+
+      <div class="modal-actions-wrap" id="modalActionContainer"></div>
+    </div>
+  </div>
+
+  <!-- Block Blast Game Over Modal -->
+  <div class="modal-scrim" id="bbGameOverModal" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <div class="modal-icon-badge" style="border-color: #EC4899; background: linear-gradient(135deg, #FDF2F8, #FCE7F3);">
+        <span style="font-size: 3.2rem;">💥</span>
+      </div>
+      <h3 class="modal-title">Block Blast Complete!</h3>
+      <p class="modal-subtitle">
+        Awesome job placing blocks and matching digestive words! No more moves fit on the board!
       </p>
 
       <div class="modal-stats-grid">
         <div class="modal-stat-box">
-          <span class="modal-stat-value" id="modalAccuracy">100%</span>
-          <span class="modal-stat-label">Accuracy</span>
+          <span class="modal-stat-value" id="bbFinalScore">0 ⭐</span>
+          <span class="modal-stat-label">Final Score</span>
         </div>
         <div class="modal-stat-box">
-          <span class="modal-stat-value" id="modalScore">600</span>
-          <span class="modal-stat-label">Total Score</span>
+          <span class="modal-stat-value" id="bbMatchesCount" style="color: #22C55E;">0 / 9</span>
+          <span class="modal-stat-label">Matches Found</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="blockBlastGame.restartGame()">
+          <span>Play Again 🔄</span>
+        </button>
+        <button class="btn-secondary" onclick="closeBlockBlastMiniGame()">
+          <span>Back to Board 🎲</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory Modal (Snakes & Ladders) -->
+  <div class="modal-scrim" id="gameVictoryModal" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <div class="modal-icon-badge" style="border-color: #F59E0B; background: linear-gradient(135deg, #FFFBEB, #FEF3C7);">
+        <span style="font-size: 3.2rem;">🏆</span>
+      </div>
+      <h3 class="modal-title" id="victoryTitle">Player 1 Wins!</h3>
+      <p class="modal-subtitle">
+        Congratulations! You climbed the ladders, dodged the sea snakes, and mastered the Digestive System! 🌴⭐
+      </p>
+
+      <div class="modal-stats-grid">
+        <div class="modal-stat-box">
+          <span class="modal-stat-value" id="victoryFinalScore">300 ⭐</span>
+          <span class="modal-stat-label">Final Score</span>
         </div>
         <div class="modal-stat-box">
-          <span class="modal-stat-value" style="color: #64D2FF;">Master</span>
+          <span class="modal-stat-value" style="color: #22C55E;">🌟 Champion</span>
           <span class="modal-stat-label">Rank</span>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button class="btn-secondary" onclick="game.closeLevelModal()">Review Cards</button>
-        <button class="btn-primary" onclick="game.proceedToNextLevel()">
-          <span>Next Level</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
+        <button class="btn-primary" onclick="game.restartGame()">
+          <span>Play Again! 🔄</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================================
-       Grand Game Victory Modal Sheet
-       ======================================================================== -->
-  <div class="modal-scrim" id="gameVictoryModal" role="dialog" aria-modal="true" aria-labelledby="victoryTitle">
-    <div class="modal-sheet">
-      <div class="modal-icon-badge" style="border-color: #FFD60A; color: #FFD60A; box-shadow: 0 0 24px rgba(255, 214, 10, 0.35);">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </div>
-      <h3 class="modal-title" id="victoryTitle">Master Gastroenterologist!</h3>
-      <p class="modal-subtitle">
-        Congratulations! You have conquered all 3 levels of DigestFlow: from the primary GI tract, to accessory biochemical organs, to microscopic enzyme kinetics.
-      </p>
+  <!-- Event Toast Banner -->
+  <div class="event-toast" id="eventToast" aria-live="polite"></div>
 
-      <div class="modal-stats-grid">
-        <div class="modal-stat-box">
-          <span class="modal-stat-value">18/18</span>
-          <span class="modal-stat-label">Solved</span>
-        </div>
-        <div class="modal-stat-box">
-          <span class="modal-stat-value" id="victoryFinalScore">1800</span>
-          <span class="modal-stat-label">Final Score</span>
-        </div>
-        <div class="modal-stat-box">
-          <span class="modal-stat-value" style="color: #30D158;">Certified</span>
-          <span class="modal-stat-label">Physiology</span>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-secondary" onclick="game.closeVictoryModal()">Explore Cards</button>
-        <button class="btn-primary" onclick="game.resetProgress(); game.closeVictoryModal();">
-          <span>Play Again</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="23 4 23 10 17 10"/>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Confetti Particle Canvas -->
+  <!-- Confetti Canvas -->
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Site Footer -->
   <footer class="site-footer">
     <div>
-      <strong>DigestFlow</strong> — Designed with Apple HIG & Human Anatomy Standards
+      🏖️ <strong>DigestBeach</strong> — Digestive System Snakes & Ladders & Block Blast Edition
     </div>
     <div class="footer-links">
-      <button class="footer-btn" onclick="game.resetProgress()">Reset Progress</button>
+      <button class="footer-btn" onclick="game.restartGame()">Reset Board</button>
     </div>
   </footer>
 
@@ -310,5 +462,6 @@
   <script src="cards-data.js"></script>
   <script src="audio.js"></script>
   <script src="game.js"></script>
+  <script src="block-blast.js"></script>
 </body>
 </html>
