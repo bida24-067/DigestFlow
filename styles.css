@@ -65,6 +65,33 @@ html, body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   position: relative;
+  /* iOS safe-area support */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Smooth scrolling everywhere */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Minimum 44px touch targets on all interactive elements */
+button,
+[role="button"],
+.kid-option-btn,
+.mode-tab-btn,
+.buddy-pick-btn,
+.nav-btn,
+.big-roll-btn,
+.beach-hint-btn,
+.beach-close-btn,
+.btn-primary,
+.btn-secondary,
+.bb-piece-slot,
+.footer-btn {
+  min-height: 44px;
+  touch-action: manipulation;
 }
 
 :focus-visible {
@@ -300,6 +327,8 @@ html, body {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 20px 16px 60px 16px;
+  /* iOS bottom safe-area for home bar */
+  padding-bottom: max(60px, calc(env(safe-area-inset-bottom) + 40px));
 }
 
 .snakes-hero-card {
@@ -1260,10 +1289,21 @@ html, body {
   text-align: center;
   transform: scale(0.9) translateY(20px);
   transition: transform 0.35s var(--spring-bounce);
+  /* Prevent text overflow on small screens */
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .modal-scrim.visible .modal-sheet {
   transform: scale(1) translateY(0);
+}
+
+/* On mobile, the organ-modal-sheet (question modal) needs to allow scrolling 
+   when content is tall */
+.organ-modal-sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .modal-icon-badge {
@@ -1386,55 +1426,404 @@ html, body {
 }
 
 /* ==========================================================================
-   Responsive Layout
+   Responsive Layout — Mobile-First
    ========================================================================== */
+
+/* ── Tablet: ≤ 900px ── */
 @media (max-width: 900px) {
-  .snakes-play-layout, .bb-play-layout {
+
+  /* Layout stacks to single column */
+  .snakes-play-layout,
+  .bb-play-layout {
     grid-template-columns: 1fr;
   }
-  .board-wrapper, .bb-board-frame {
+
+  .board-wrapper {
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  .bb-board-frame {
     max-width: 560px;
     margin: 0 auto;
   }
-  .kid-options-grid {
-    grid-template-columns: 1fr;
+
+  /* Sidebar goes below board */
+  .sidebar-station {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .sidebar-station > * {
+    flex: 1 1 200px;
+  }
+
+  .dice-box-card {
+    flex: 0 0 auto;
+  }
+
+  /* Journey tracker — scrollable milestones */
+  .journey-milestones {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
   }
 }
 
-@media (max-width: 600px) {
-  .board-square {
-    padding: 3px;
+/* ── Phone: ≤ 640px ── */
+@media (max-width: 640px) {
+
+  /* ── NAV ── */
+  .nav-container {
+    padding: 8px 12px;
+    gap: 8px;
   }
-  .square-number {
-    width: 18px;
-    height: 18px;
-    font-size: 0.65rem;
+
+  .brand-icon-box {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
   }
-  .square-icon {
-    font-size: 1.15rem;
+
+  .brand-name { font-size: 1.05rem; }
+  .brand-edition { display: none; }
+
+  .nav-actions {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
   }
-  .square-badge {
-    display: none;
-  }
-  .tokens-container {
-    height: 22px;
-  }
-  .board-token {
-    width: 22px;
-    height: 22px;
-  }
-  .token-emoji {
-    font-size: 1rem;
-  }
+
   .score-stats-cluster {
-    display: none;
+    display: none; /* shown in sidebar instead */
   }
+
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .nav-btn span { font-size: 0.78rem; }
+
+  /* ── APP CONTAINER ── */
+  .app-container {
+    padding: 12px 8px 80px 8px;
+  }
+
+  /* ── HERO CARD (Settings) ── */
+  .snakes-hero-card {
+    padding: 12px;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .snakes-hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .mode-selector-wrap,
+  .avatar-selector-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .mode-tab-btn,
+  .buddy-pick-btn {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    min-height: 40px;
+  }
+
+  .snakes-legend-bar {
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+
+  /* ── JOURNEY TRACKER ── */
+  .journey-tracker-card {
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+
+  .journey-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .journey-icon { font-size: 1.4rem; padding: 4px 8px; }
+  .journey-title { font-size: 0.9rem; }
+  .journey-status-text { font-size: 0.78rem; }
+  .journey-pct-badge { font-size: 0.78rem; padding: 4px 10px; }
+
+  .milestone-chip { font-size: 0.66rem; padding: 3px 6px; }
+  .milestone-arrow { font-size: 0.65rem; }
+
+  /* ── BOARD ── */
+  .board-frame {
+    border-width: 5px;
+    padding: 5px;
+  }
+
+  .board-square {
+    padding: 2px;
+  }
+
+  .square-number {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+  }
+
+  .square-icon { font-size: 1.05rem; }
+
+  .square-badge { display: none; }
+
+  .tokens-container { height: 20px; }
+
+  .board-token {
+    width: 20px;
+    height: 20px;
+  }
+
+  .token-emoji { font-size: 0.95rem; }
+
+  /* ── SIDEBAR (stacks vertically) ── */
+  .sidebar-station {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .turn-status-card {
+    padding: 10px 14px;
+  }
+
+  .turn-banner-text { font-size: 0.95rem; }
+
+  .dice-box-card {
+    padding: 14px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .die-3d-wrapper { margin-bottom: 0; }
+
+  .beach-die {
+    width: 58px;
+    height: 58px;
+  }
+
+  .big-roll-btn {
+    padding: 12px 22px;
+    font-size: 1.05rem;
+  }
+
+  .spacebar-hint { display: none; }
+
+  .player-status-card { padding: 10px 12px; }
+
+  .player-pill {
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+
+  .p-avatar { font-size: 1.15rem; }
+  .p-pos { font-size: 0.72rem; padding: 2px 8px; }
+  .p-points-badge { font-size: 0.7rem; padding: 2px 6px; }
+
+  .tip-card { font-size: 0.82rem; padding: 10px 12px; }
+
+  /* ── QUESTION MODAL ── */
+  .modal-scrim {
+    padding: 0;
+    align-items: flex-end; /* slides up from bottom on mobile */
+  }
+
+  .modal-sheet {
+    max-width: 100%;
+    width: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 20px 16px 32px;
+    border-bottom: none;
+    transform: translateY(100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-scrim.visible .modal-sheet {
+    transform: translateY(0) scale(1);
+  }
+
+  .organ-modal-sheet {
+    padding: 20px 16px 32px;
+  }
+
+  .modal-challenge-header {
+    font-size: 0.82rem;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+  }
+
+  .modal-organ-badge {
+    width: 64px;
+    height: 64px;
+  }
+
+  .modal-organ-tag {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+
+  .modal-riddle-text { font-size: 1rem; }
+
+  .modal-riddle-box { padding: 12px 14px; margin-bottom: 14px; }
+
+  .kid-options-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .kid-option-btn {
+    padding: 12px 8px;
+    font-size: 0.88rem;
+    min-height: 60px;
+  }
+
+  .beach-hint-btn,
+  .beach-close-btn,
+  .btn-primary {
+    padding: 12px 16px;
+    font-size: 0.92rem;
+    width: 100%;
+  }
+
+  .modal-title { font-size: 1.45rem; }
+  .modal-subtitle { font-size: 0.88rem; }
+  .modal-stat-value { font-size: 1.25rem; }
+
+  /* ── BLOCK BLAST ── */
+  .bb-hero-card { padding: 12px; gap: 10px; margin-bottom: 12px; }
+  .bb-title { font-size: 1.3rem; }
+  .bb-subtitle { font-size: 0.82rem; }
+
+  .bb-board-frame {
+    border-width: 5px;
+    padding: 6px;
+  }
+
+  .bb-grid-container { gap: 3px; }
+
+  .bb-cell {
+    border-radius: 5px;
+  }
+
+  .bb-cell-text { font-size: 0.58rem; }
+
+  .bb-tray-container { margin-top: 12px; gap: 8px; }
+
+  .bb-pieces-tray {
+    gap: 10px;
+    justify-content: space-around;
+  }
+
+  .bb-piece-slot {
+    min-width: 88px;
+    min-height: 88px;
+    padding: 7px;
+  }
+
   .bb-mini-block {
     width: 22px;
     height: 22px;
   }
-  .bb-cell-text {
-    font-size: 0.6rem;
+
+  .bb-targets-card { padding: 12px 14px; }
+
+  .bb-pair-chip {
+    font-size: 0.78rem;
+    padding: 6px 10px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .bb-stats-row { gap: 6px; }
+
+  /* ── FOOTER ── */
+  .site-footer { padding: 12px; font-size: 0.78rem; }
+}
+
+/* ── Very small phones: ≤ 380px ── */
+@media (max-width: 380px) {
+
+  .board-frame {
+    border-width: 4px;
+    padding: 3px;
+  }
+
+  .square-number { display: none; }
+  .square-icon { font-size: 0.9rem; }
+
+  .board-token {
+    width: 18px;
+    height: 18px;
+  }
+
+  .token-emoji { font-size: 0.85rem; }
+
+  .beach-die { width: 50px; height: 50px; }
+
+  .big-roll-btn {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  /* Keep 2 columns — better for touch */
+  .kid-options-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kid-option-btn {
+    font-size: 0.8rem;
+    padding: 10px 6px;
+    min-height: 52px;
+  }
+
+  .bb-piece-slot {
+    min-width: 76px;
+    min-height: 76px;
+  }
+
+  .bb-mini-block {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Hide nav button text, show icon only */
+  .nav-btn span {
+    display: none;
+  }
+
+  .nav-btn::before {
+    content: attr(data-icon);
+    font-size: 1.2rem;
+  }
+  
+  /* But mode switch btn always needs some text */
+  #gameModeToggleBtn span {
+    display: inline;
+    font-size: 0;
+  }
+  #gameModeToggleBtn span::first-letter {
+    font-size: 1.1rem;
   }
 }
 
@@ -1846,3 +2235,137 @@ html, body {
   line-height: 1.45;
 }
 
+
+/* ==========================================================================
+   Collapsible sidebar panels (Block Blast mobile UX)
+   ========================================================================== */
+.bb-collapsible-trigger {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.bb-collapse-icon {
+  margin-left: auto;
+  font-size: 0.8rem;
+  transition: transform 0.25s ease;
+}
+
+.bb-targets-card.collapsed .bb-collapse-icon,
+.bb-rules-card.collapsed .bb-collapse-icon {
+  transform: rotate(180deg);
+}
+
+.bb-targets-card.collapsed .bb-pairs-list,
+.bb-rules-card.collapsed .bb-rules-list {
+  display: none;
+}
+
+.bb-rules-title.bb-collapsible-trigger {
+  margin-bottom: 0;
+}
+
+.bb-rules-card.collapsed .bb-rules-title {
+  margin-bottom: 0;
+}
+
+/* On mobile, make the sidebar appear BELOW the board as a slim horizontal strip */
+@media (max-width: 640px) {
+
+  .bb-play-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .bb-sidebar-column {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .bb-targets-card {
+    flex: 1 1 100%;
+    padding: 12px;
+  }
+
+  .bb-pairs-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .bb-pair-chip {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    padding: 5px 8px;
+    gap: 3px;
+  }
+
+  .bb-rules-card {
+    flex: 1 1 100%;
+    padding: 10px 14px;
+  }
+
+  .bb-rules-list { font-size: 0.8rem; gap: 5px; }
+
+  /* Force sidebar panels collapsed on initial mobile load */
+  .bb-targets-card .bb-collapse-icon { display: inline; }
+
+  .bb-tray-hint {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  /* Tray pieces — wider touch targets */
+  .bb-pieces-tray {
+    padding: 4px 0;
+  }
+}
+
+/* ==========================================================================
+   Block Blast — Line Blast Question Modal
+   ========================================================================== */
+
+.bb-question-sheet {
+  border-top: 5px solid #EC4899;
+  background: linear-gradient(160deg, #FFF0FB 0%, #F5F3FF 100%);
+}
+
+.bb-q-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  animation: bbQHeaderPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes bbQHeaderPop {
+  from { transform: scale(0.6) translateY(-10px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);       opacity: 1; }
+}
+
+.bb-q-blast-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #EC4899, #8B5CF6);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 900;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  letter-spacing: 0.03em;
+  box-shadow: 0 3px 12px rgba(139, 92, 246, 0.40);
+}
+
+.bb-q-subtitle {
+  font-size: 0.85rem;
+  color: #78350F;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}

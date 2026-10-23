@@ -53,7 +53,7 @@ class AudioManager {
     this.resumeIfNeeded();
     if (!this.ctx) return;
 
-    this.vibrate(10);
+    if (navigator.vibrate) navigator.vibrate(10);
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -79,7 +79,7 @@ class AudioManager {
     this.resumeIfNeeded();
     if (!this.ctx) return;
 
-    this.vibrate([20, 30, 20]);
+    if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
     const now = this.ctx.currentTime;
 
     // Bass boom
@@ -125,7 +125,7 @@ class AudioManager {
     this.resumeIfNeeded();
     if (!this.ctx) return;
 
-    this.vibrate([15, 30, 20]);
+    if (navigator.vibrate) navigator.vibrate([15, 30, 20]);
     const notes = [587.33, 739.99, 880.00, 1174.66]; // D5, F#5, A5, D6
     const now = this.ctx.currentTime;
 

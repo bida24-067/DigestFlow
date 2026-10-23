@@ -49,9 +49,13 @@ class BlockBlastMiniGame {
     this.matchesFound = new Set();
     this.isBlasting = false;
 
+    // Question bonus tracking
+    this.questionsAnsweredCorrectly = 0;
+    this.totalBonusEarned = 0;
+
     // Drag-and-drop state
-    this.activeDrag = null; // { pieceIndex, piece, avatarElem, touchStartY, etc. }
-    this.currentHoverPlacement = null; // { startR, startC, valid }
+    this.activeDrag = null;
+    this.currentHoverPlacement = null;
 
     this.confetti = typeof ConfettiEngine !== 'undefined' ? new ConfettiEngine('confettiCanvas') : null;
   }
@@ -589,6 +593,7 @@ class BlockBlastMiniGame {
 
   /* ==========================================================================
      Line Blast Clears (Classic Block Blast Row / Column Explosions)
+     After clearing, pauses to show a digestive question for bonus points!
      ========================================================================== */
   checkLineBlasts(onComplete) {
     const fullRows = [];
@@ -662,7 +667,7 @@ class BlockBlastMiniGame {
     });
 
     const comboLabel = this.comboStreak > 1 ? ` COMBO x${this.comboStreak}!` : '';
-    this.showComboToast(`💥 ${totalLines} LINE BLAST!${comboLabel}`, `+${blastPoints} Stars! ⭐`);
+    this.showComboToast(`💥 ${totalLines} LINE BLAST!${comboLabel}`, `+${blastPoints} Stars! ⭐ Answer the bonus question!`);
 
     if (this.confetti) {
       this.confetti.burst(window.innerWidth / 2, window.innerHeight * 0.4, 25 * totalLines);
@@ -679,8 +684,158 @@ class BlockBlastMiniGame {
 
       this.isBlasting = false;
       this.renderBoard();
-      if (onComplete) onComplete();
+
+      // 🎯 Show bonus question before continuing!
+      this.showBlastBonusQuestion(totalLines, blastPoints, onComplete);
     }, 450);
+  }
+
+  /* ==========================================================================
+     Blast Bonus Question Modal
+     Shown after every successful line clear for bonus points
+     ========================================================================== */
+  showBlastBonusQuestion(totalLines, blastPoints, onComplete) {
+    const question = getRandomDigestiveQuestion();
+    const modal = document.getElementById('bbQuestionModal');
+    if (!modal) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    // Bonus point value scales with lines and combo
+    const bonusOnCorrect = totalLines * 150 * this.comboStreak;
+
+    // Set header text
+    const header = document.getElementById('bbQHeader');
+    const blastBadge = document.getElementById('bbQBlastBadge');
+    const comboLabel = this.comboStreak > 1 ? ` COMBO x${this.comboStreak}` : '';
+    if (blastBadge) {
+      blastBadge.textContent = `💥 ${totalLines} LINE BLAST!${comboLabel}`;
+      blastBadge.style.background = this.comboStreak > 1
+        ? 'linear-gradient(135deg, #F59E0B, #EF4444)'
+        : 'linear-gradient(135deg, #EC4899, #8B5CF6)';
+    }
+
+    // Fill question content
+    const icon = document.getElementById('bbQIcon');
+    const topic = document.getElementById('bbQTopic');
+    const qText = document.getElementById('bbQText');
+    const hintBox = document.getElementById('bbQHintBox');
+    const funFactBox = document.getElementById('bbQFunFactBox');
+    const optionsContainer = document.getElementById('bbQOptions');
+    const actionsContainer = document.getElementById('bbQActions');
+
+    if (icon) icon.innerHTML = `<span style="font-size:2.6rem;">${question.emoji}</span>`;
+    if (topic) topic.textContent = `${question.topic} — Get it right for +${bonusOnCorrect} bonus! 🌟`;
+    if (qText) qText.textContent = question.question;
+    if (hintBox) hintBox.style.display = 'none';
+    if (funFactBox) funFactBox.style.display = 'none';
+
+    if (optionsContainer) {
+      optionsContainer.innerHTML = question.options.map((opt, i) => `
+        <button class="kid-option-btn" id="bbq-opt-${i}" onclick="blockBlastGame.answerBlastQuestion(${i})">
+          <span class="opt-label">${opt}</span>
+          <span class="opt-status"></span>
+        </button>
+      `).join('');
+    }
+
+    if (actionsContainer) {
+      actionsContainer.innerHTML = `
+        <div class="modal-action-row">
+          <button class="beach-hint-btn" onclick="blockBlastGame.showBlastHint()">
+            <span>💡 Hint</span>
+          </button>
+        </div>
+      `;
+    }
+
+    // Store pending state
+    this._pendingBlastQ = { question, bonusOnCorrect, onComplete };
+
+    modal.classList.add('visible');
+    audio.playTap();
+  }
+
+  showBlastHint() {
+    if (!this._pendingBlastQ) return;
+    const hintBox = document.getElementById('bbQHintBox');
+    if (hintBox) {
+      hintBox.style.display = 'block';
+      hintBox.innerHTML = `💡 <strong>Hint:</strong> ${this._pendingBlastQ.question.hint}`;
+    }
+  }
+
+  answerBlastQuestion(optIdx) {
+    if (!this._pendingBlastQ) return;
+    const { question, bonusOnCorrect, onComplete } = this._pendingBlastQ;
+
+    const btn = document.getElementById(`bbq-opt-${optIdx}`);
+    const funFactBox = document.getElementById('bbQFunFactBox');
+    const actionsContainer = document.getElementById('bbQActions');
+    const isCorrect = (optIdx === question.correctIndex);
+
+    // Disable all buttons immediately
+    document.querySelectorAll('[id^="bbq-opt-"]').forEach(b => b.style.pointerEvents = 'none');
+
+    if (isCorrect) {
+      audio.playSuccess();
+      if (this.confetti) this.confetti.burst(window.innerWidth / 2, window.innerHeight * 0.4, 45);
+
+      if (btn) {
+        btn.classList.add('correct');
+        btn.querySelector('.opt-status').innerHTML = `✅ +${bonusOnCorrect} bonus!`;
+      }
+
+      this.score += bonusOnCorrect;
+      this.questionsAnsweredCorrectly = (this.questionsAnsweredCorrectly || 0) + 1;
+      this.totalBonusEarned = (this.totalBonusEarned || 0) + bonusOnCorrect;
+      this.updateScoreUI();
+
+      if (funFactBox) {
+        funFactBox.style.display = 'block';
+        funFactBox.innerHTML = `
+          <div class="funfact-title">🎉 Brilliant! +${bonusOnCorrect} Bonus Stars earned! ⭐</div>
+          <div class="funfact-text"><strong>Body Fact:</strong> ${question.funFact}</div>
+        `;
+      }
+    } else {
+      audio.playError();
+      if (btn) {
+        btn.classList.add('wrong');
+        btn.querySelector('.opt-status').innerHTML = '🤔 Not quite!';
+      }
+      // Show correct answer
+      const correctBtn = document.getElementById(`bbq-opt-${question.correctIndex}`);
+      if (correctBtn) correctBtn.classList.add('correct');
+
+      if (funFactBox) {
+        funFactBox.style.display = 'block';
+        funFactBox.innerHTML = `
+          <div class="funfact-title" style="color:#0284C7;">✏️ The answer is: ${question.options[question.correctIndex]}</div>
+          <div class="funfact-text"><strong>Body Fact:</strong> ${question.funFact}</div>
+        `;
+      }
+    }
+
+    if (actionsContainer) {
+      actionsContainer.innerHTML = `
+        <button class="btn-primary" style="width:100%; margin-top:10px;"
+                onclick="blockBlastGame.closeBlastQuestion()">
+          <span>Continue Blasting! 💥</span>
+        </button>
+      `;
+    }
+  }
+
+  closeBlastQuestion() {
+    const modal = document.getElementById('bbQuestionModal');
+    if (modal) modal.classList.remove('visible');
+
+    const onComplete = this._pendingBlastQ && this._pendingBlastQ.onComplete;
+    this._pendingBlastQ = null;
+
+    if (onComplete) onComplete();
   }
 
   /* ==========================================================================
@@ -720,6 +875,12 @@ class BlockBlastMiniGame {
 
         if (finalScoreElem) finalScoreElem.textContent = `${this.score} ⭐`;
         if (matchesCountElem) matchesCountElem.textContent = `${this.matchesFound.size} / ${DIGESTIVE_MATCH_PAIRS.length}`;
+
+        const qCorrectElem = document.getElementById('bbQuestionsCorrect');
+        const bonusPtsElem = document.getElementById('bbBonusPoints');
+        if (qCorrectElem) qCorrectElem.textContent = this.questionsAnsweredCorrectly || 0;
+        if (bonusPtsElem) bonusPtsElem.textContent = `${this.totalBonusEarned || 0} ⭐`;
+
         if (modal) modal.classList.add('visible');
       }, 600);
     }
@@ -736,6 +897,8 @@ class BlockBlastMiniGame {
     this.matchesFound.clear();
     this.selectedPieceIndex = null;
     this.isBlasting = false;
+    this.questionsAnsweredCorrectly = 0;
+    this.totalBonusEarned = 0;
 
     this.renderBoard();
     this.spawnPieces();

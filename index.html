@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>DigestBeach 🏖️ — Digestive System Board Game & Block Blast</title>
   <meta name="description" content="A fun beach board game and Block Blast mini-game matching digestive words to simple meanings!">
   <meta name="theme-color" content="#BAE6FD">
@@ -83,8 +83,8 @@
 
       <div class="nav-actions">
         <!-- Mode Switcher Pill (Snakes & Ladders <-> Block Blast) -->
-        <button id="gameModeToggleBtn" class="nav-btn mode-switch-btn" onclick="openBlockBlastMiniGame()">
-          <span>🧩 Block Blast Mini-Game</span>
+        <button id="gameModeToggleBtn" class="nav-btn mode-switch-btn" onclick="openBlockBlastMiniGame()" data-icon="🧩">
+          <span>🧩 Block Blast</span>
         </button>
 
         <div class="score-stats-cluster">
@@ -98,11 +98,11 @@
           </div>
         </div>
 
-        <button id="soundToggleBtn" class="nav-btn" aria-label="Toggle sound feedback">
+        <button id="soundToggleBtn" class="nav-btn" aria-label="Toggle sound feedback" data-icon="🔊">
           <span>🔊 Sound On</span>
         </button>
 
-        <button class="nav-btn restart-btn" onclick="game.restartGame()" title="Restart Game">
+        <button class="nav-btn restart-btn" onclick="game.restartGame()" title="New Game" data-icon="🔄">
           <span>🔄 New Game</span>
         </button>
       </div>
@@ -322,11 +322,12 @@
         <!-- Right: Digestive Word Match Collection & How to Play -->
         <div class="bb-sidebar-column">
           
-          <!-- Word Match Targets Card -->
+          <!-- Word Match Targets Card (collapsible on mobile) -->
           <div class="bb-targets-card">
-            <div class="bb-card-title">
+            <div class="bb-card-title bb-collapsible-trigger" onclick="this.parentElement.classList.toggle('collapsed')" role="button" tabindex="0" aria-expanded="true">
               <span>📖 Digestive Word Matches:</span>
-              <span style="font-size: 0.8rem; font-weight: 700; color: #0284C7;">Match adjacent or clear in a blast!</span>
+              <span style="font-size:0.8rem; font-weight:700; color:#0284C7;">Match adjacent or clear in a blast!</span>
+              <span class="bb-collapse-icon">▲</span>
             </div>
             
             <div class="bb-pairs-list" id="bbPairsList">
@@ -334,9 +335,12 @@
             </div>
           </div>
 
-          <!-- How to Play Card -->
+          <!-- How to Play Card (collapsible on mobile) -->
           <div class="bb-rules-card">
-            <div class="bb-rules-title">💡 How to Play Block Blast:</div>
+            <div class="bb-rules-title bb-collapsible-trigger" onclick="this.parentElement.classList.toggle('collapsed')" role="button" tabindex="0" aria-expanded="true">
+              💡 How to Play Block Blast:
+              <span class="bb-collapse-icon">▲</span>
+            </div>
             <ul class="bb-rules-list">
               <li>🧱 <strong>Place Shapes:</strong> Select a piece and tap any valid spot on the 8×8 board.</li>
               <li>💥 <strong>Line Blast:</strong> Fill any full horizontal row or vertical column to BLAST it for points!</li>
@@ -399,6 +403,14 @@
           <span class="modal-stat-value" id="bbMatchesCount" style="color: #22C55E;">0 / 9</span>
           <span class="modal-stat-label">Matches Found</span>
         </div>
+        <div class="modal-stat-box">
+          <span class="modal-stat-value" id="bbQuestionsCorrect" style="color: #F59E0B;">0</span>
+          <span class="modal-stat-label">Questions Correct</span>
+        </div>
+        <div class="modal-stat-box">
+          <span class="modal-stat-value" id="bbBonusPoints" style="color: #8B5CF6;">0 ⭐</span>
+          <span class="modal-stat-label">Bonus Earned</span>
+        </div>
       </div>
 
       <div class="modal-actions">
@@ -409,6 +421,35 @@
           <span>Back to Board 🎲</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Block Blast Line Blast Question Modal -->
+  <div class="modal-scrim" id="bbQuestionModal" role="dialog" aria-modal="true">
+    <div class="modal-sheet organ-modal-sheet bb-question-sheet">
+
+      <!-- Animated blast header -->
+      <div class="bb-q-header" id="bbQHeader">
+        <span class="bb-q-blast-badge" id="bbQBlastBadge">💥 1 LINE BLAST!</span>
+        <span class="bb-q-subtitle">Answer for bonus points!</span>
+      </div>
+
+      <div class="modal-organ-badge" id="bbQIcon">
+        <span>🧠</span>
+      </div>
+      <div class="modal-organ-tag" id="bbQTopic">Digestive System</div>
+
+      <div class="modal-riddle-box">
+        <div class="riddle-bubble-icon">🗣️ Quick Question:</div>
+        <p class="modal-riddle-text" id="bbQText">Loading question...</p>
+      </div>
+
+      <div class="modal-hint-box" id="bbQHintBox" style="display:none;"></div>
+      <div class="modal-funfact-box" id="bbQFunFactBox" style="display:none;"></div>
+
+      <div class="kid-options-grid" id="bbQOptions"></div>
+
+      <div class="modal-actions-wrap" id="bbQActions"></div>
     </div>
   </div>
 
